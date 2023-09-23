@@ -4,9 +4,11 @@ import java.util.stream.Stream;
 
 public class HomeWork2 {
     public static void main(String[] args) {
+
         // create regions
         Weather moscowWeather = new Weather("Moscow", 10);
         Weather surgutWeather = new Weather("Surgut", -10);
+        Weather surgutWeather2 = new Weather("Surgut", -20);
         Weather saintPeterburgWeather = new Weather("SP", 15);
         Weather berlinWeather = new Weather("Berlin", 20);
         Weather darmstadtWeather = new Weather("Darmstadt", 17);
@@ -15,6 +17,7 @@ public class HomeWork2 {
         List<Weather> regions = new ArrayList<Weather>();
         regions.add(moscowWeather);
         regions.add(surgutWeather);
+        regions.add(surgutWeather2);
         regions.add(saintPeterburgWeather);
         regions.add(berlinWeather);
         regions.add(darmstadtWeather);
@@ -29,7 +32,7 @@ public class HomeWork2 {
         System.out.println(Arrays.toString(filteredRegions.toArray()));
 
         // subtask 3
-        Map<UUID, Integer> mapWithUUIDAndTemperature = convertToMapUUIDAndTemperature(regions);
+        Map<UUID, List<Integer>> mapWithUUIDAndTemperature = convertToMapUUIDAndTemperatureList(regions);
         mapWithUUIDAndTemperature.forEach((key, value) -> System.out.println(key + ": " + value));
 
         // subtask 4
@@ -66,9 +69,13 @@ public class HomeWork2 {
      * @param regions A list of regions to consider.
      * @return Described map.
      */
-    public static Map<UUID, Integer> convertToMapUUIDAndTemperature(List<Weather> regions){
+    public static Map<UUID, List<Integer>> convertToMapUUIDAndTemperatureList(List<Weather> regions){
         Stream<Weather> regionsStream = regions.stream();
-        return regionsStream.collect(Collectors.toMap(Weather::getId, Weather::getTemperature));
+//        Map <UUID, List<Weather>> a = regionsStream.collect(Collectors.groupingBy(Weather::getId));
+//        return Collectors.toMap(regionsStream.collect(Collectors.groupingBy(Weather::getId)));
+        return regionsStream.collect(Collectors.groupingBy(Weather::getId,
+                Collectors.mapping(Weather::getTemperature, Collectors.toList())));
+
     }
 
     /**
@@ -81,6 +88,5 @@ public class HomeWork2 {
         Stream<Weather> regionsStream = regions.stream();
         return regionsStream.collect(Collectors.groupingBy(Weather::getTemperature));
     }
-
 
 }

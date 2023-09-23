@@ -3,7 +3,7 @@ import java.util.UUID;
 
 public class Weather {
 
-    private UUID id = UUID.randomUUID();;
+    private UUID id;
 
     private String regionName;
 
@@ -14,6 +14,7 @@ public class Weather {
     // no date in constructor to simplify process of creating new Weather objects
     public Weather(String regionName, int temperature) {
         this.regionName = regionName;
+        this.id = UUID.nameUUIDFromBytes(regionName.getBytes());
         this.temperature = temperature;
     }
 
