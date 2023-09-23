@@ -1,6 +1,11 @@
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.Date;
 import java.util.UUID;
 
+@Getter
+@Setter
 public class Weather {
 
     private UUID id;
@@ -16,39 +21,5 @@ public class Weather {
         this.regionName = regionName;
         this.id = UUID.nameUUIDFromBytes(regionName.getBytes());
         this.temperature = temperature;
-    }
-
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public String getRegionName() {
-        return regionName;
-    }
-
-    public void setRegionName(String regionName) {
-        this.regionName = regionName;
-    }
-
-
-    public int getTemperature() {
-        return temperature;
-    }
-
-    public void setTemperature(int temperature) {
-        this.temperature = temperature;
-    }
-
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
     }
 }

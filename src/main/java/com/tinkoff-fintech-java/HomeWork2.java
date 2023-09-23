@@ -71,8 +71,6 @@ public class HomeWork2 {
      */
     public static Map<UUID, List<Integer>> convertToMapUUIDAndTemperatureList(List<Weather> regions){
         Stream<Weather> regionsStream = regions.stream();
-//        Map <UUID, List<Weather>> a = regionsStream.collect(Collectors.groupingBy(Weather::getId));
-//        return Collectors.toMap(regionsStream.collect(Collectors.groupingBy(Weather::getId)));
         return regionsStream.collect(Collectors.groupingBy(Weather::getId,
                 Collectors.mapping(Weather::getTemperature, Collectors.toList())));
 
