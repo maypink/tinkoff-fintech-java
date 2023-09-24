@@ -6,7 +6,7 @@ public class HomeWork2 {
     public static void main(String[] args) {
 
         // create regions
-        Weather moscowWeather = new Weather("Moscow", 10);
+        Weather moscowWeather = new Weather("Moscow", -40);
         Weather surgutWeather = new Weather("Surgut", -10);
         Weather surgutWeather2 = new Weather("Surgut", -20);
         Weather saintPeterburgWeather = new Weather("SP", 15);
@@ -28,7 +28,7 @@ public class HomeWork2 {
         System.out.printf("The average temperature is %f%n", averageTemperature);
 
         // subtask 2
-        List<String> filteredRegions = getRegionsWithTemperatureHigher(regions, 10);
+        List<String> filteredRegions = getRegionsWithTemperatureHigher(regions, -30);
         System.out.println(Arrays.toString(filteredRegions.toArray()));
 
         // subtask 3
@@ -47,11 +47,7 @@ public class HomeWork2 {
      * @return An average temperature.
      */
     public static double getAverageTemperature(List<Weather> regions){
-        Stream<Weather> regionsStream = regions.stream();
-        return regionsStream
-                .mapToDouble(Weather::getTemperature)
-                .average()
-                .orElse(Double.NaN);
+        return  regions.stream().mapToDouble(Weather::getTemperature).average().orElse(Double.NaN);
     }
 
     /**
@@ -65,6 +61,7 @@ public class HomeWork2 {
         return regions.stream()
                 .filter(r -> r.getTemperature() > temperature)
                 .map(Weather::getRegionName)
+                .distinct()
                 .toList();
     }
 
