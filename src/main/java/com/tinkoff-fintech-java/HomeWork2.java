@@ -48,7 +48,10 @@ public class HomeWork2 {
      */
     public static double getAverageTemperature(List<Weather> regions){
         Stream<Weather> regionsStream = regions.stream();
-        return regionsStream.mapToDouble(Weather::getTemperature).average().orElse(Double.NaN);
+        return regionsStream
+                .mapToDouble(Weather::getTemperature)
+                .average()
+                .orElse(Double.NaN);
     }
 
     /**
@@ -59,8 +62,10 @@ public class HomeWork2 {
      * @return Regions filtered by temperature.
      */
     public static List<String> getRegionsWithTemperatureHigher(List<Weather> regions, int temperature){
-        Stream<Weather> regionsStream = regions.stream();
-        return regionsStream.filter(r -> r.getTemperature() > temperature).map(Weather::getRegionName).toList();
+        return regions.stream()
+                .filter(r -> r.getTemperature() > temperature)
+                .map(Weather::getRegionName)
+                .toList();
     }
 
     /**
@@ -70,9 +75,13 @@ public class HomeWork2 {
      * @return Described map.
      */
     public static Map<UUID, List<Integer>> convertToMapUUIDAndTemperatureList(List<Weather> regions){
-        Stream<Weather> regionsStream = regions.stream();
-        return regionsStream.collect(Collectors.groupingBy(Weather::getId,
-                Collectors.mapping(Weather::getTemperature, Collectors.toList())));
+        return regions.stream()
+                .collect(Collectors.groupingBy(
+                        Weather::getId,
+                        Collectors.mapping(
+                                Weather::getTemperature,
+                                Collectors.toList())
+                ));
 
     }
 
@@ -83,8 +92,7 @@ public class HomeWork2 {
      * @return Described map.
      */
     public static Map<Integer, List<Weather>> convertToMapTemperatureAndWeatherCollection(List<Weather> regions){
-        Stream<Weather> regionsStream = regions.stream();
-        return regionsStream.collect(Collectors.groupingBy(Weather::getTemperature));
+        return regions.stream().collect(Collectors.groupingBy(Weather::getTemperature));
     }
 
 }

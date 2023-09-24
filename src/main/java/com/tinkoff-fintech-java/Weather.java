@@ -12,7 +12,7 @@ public class Weather {
 
     private String regionName;
 
-    private Integer temperature;
+    private int temperature;
 
     private Date date = new Date();
 
