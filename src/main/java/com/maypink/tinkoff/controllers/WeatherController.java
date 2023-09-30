@@ -107,7 +107,7 @@ public class WeatherController {
         }
         else {
             LocalDate parsedDate = LocalDate.parse(date);
-            Optional<List<Weather>> weatherList = weatherService.delete(regionName, parsedDate);
+            Optional<List<Weather>> weatherList = weatherService.deleteByRegionName(regionName, parsedDate);
             if (weatherList.isPresent()) {
                 return new ResponseEntity<>(weatherList, HttpStatus.OK);
             } else {

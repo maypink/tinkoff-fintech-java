@@ -33,7 +33,7 @@ public class WeatherServiceImpl implements WeatherService{
     }
 
     @Override
-    public Optional<List<Weather>> delete(String regionName, LocalDate date) {
+    public Optional<List<Weather>> deleteByRegionName(String regionName, LocalDate date) {
         return weatherRepository.deleteWeather(regionName);
     }
 }
