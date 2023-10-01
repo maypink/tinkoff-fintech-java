@@ -13,6 +13,9 @@ public class WeatherValidator implements Validator {
         this.validateStringParams(regionName, "0", String.valueOf(LocalDate.now()), errors);
     }
     public void validateStringParams(String regionName, String temperature, String date, Errors errors){
+        if (regionName.isEmpty() || regionName.length() > 15){
+            errors.rejectValue("regionName", "422", "Incorrect region name");
+        }
         try {
             Integer.parseInt(temperature);
         } catch (NumberFormatException exception){
@@ -32,7 +35,6 @@ public class WeatherValidator implements Validator {
 
     @Override
     public void validate(Object target, Errors errors) {
-        // implemented more just for a fact, there is no usage of this method in the project
         Weather weather = (Weather) target;
         this.validateStringParams(
                 weather.getRegionName(), String.valueOf(weather.getTemperature()),

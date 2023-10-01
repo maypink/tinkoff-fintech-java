@@ -23,22 +23,22 @@ public class WeatherServiceImpl implements WeatherService{
     }
 
     @Override
-    public Weather add(String regionName, Integer temperature, LocalDate date) {
-        return weatherRepository.addWeather(regionName, temperature, date);
+    public Weather add(Weather weather) {
+        return weatherRepository.addWeather(weather);
     }
 
     @Override
-    public Weather update(String regionName, Integer temperature, LocalDate date) {
-        List<Weather> weatherList = weatherRepository.getWeatherByRegionAndDate(regionName, date);
+    public Weather update(Weather weather) {
+        List<Weather> filteredWeathers = weatherRepository.getWeatherByRegionAndDate(weather.getRegionName(), weather.getDate());
 
         // if there is no such Weather object
-        if (weatherList.isEmpty()) {
-            return weatherRepository.addWeather(regionName, temperature, date);
+        if (filteredWeathers.isEmpty()) {
+            return weatherRepository.addWeather(weather);
         } else {
             // there must be only zero or one weather with specified date and region, since adding new object with the same data
             // is impossible
-            Weather weatherToUpdate = weatherList.get(0);
-            return weatherRepository.updateWeatherWithTemperature(weatherToUpdate, temperature);
+            Weather weatherToUpdate = filteredWeathers.get(0);
+            return weatherRepository.updateWeatherWithTemperature(weatherToUpdate, weather.getTemperature());
         }
     }
 

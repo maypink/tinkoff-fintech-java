@@ -6,6 +6,9 @@ import com.maypink.tinkoff.services.WeatherServiceImpl;
 import com.maypink.tinkoff.util.WeatherValidator;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -32,12 +35,13 @@ public class WeatherController {
             description = "Get weather object by region name and current date"
     )
     @GetMapping("/{regionName}")
-    public ResponseEntity<?> get(@PathVariable @Parameter(description = "Region name") String regionName){
-        List<Weather> weatherObject = weatherService.getWeatherByRegionNameAndDate(regionName, LocalDate.now());
-        if (weatherObject.isEmpty()){
+    public ResponseEntity<?> get(@PathVariable @Parameter(description = "Region name") @NotEmpty @Size(max = 15) String regionName){
+
+        List<Weather> weathers = weatherService.getWeatherByRegionNameAndDate(regionName, LocalDate.now());
+        if (weathers.isEmpty()){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Weather object is not found");
         } else {
-            return ResponseEntity.status(HttpStatus.OK).body(weatherObject.get(0));
+            return ResponseEntity.status(HttpStatus.OK).body(weathers.get(0));
         }
     }
 
@@ -45,22 +49,17 @@ public class WeatherController {
             summary = "Add new region",
             description = "Add new region with specified region name, temperature and date."
     )
-    @PostMapping("/{regionName}")
-    public ResponseEntity<?> add(@PathVariable @Parameter(description = "Region name") String regionName,
-                                 @RequestBody @Parameter(description = "Temperature") String temperature,
-                                 @RequestBody @Parameter(description = "Date") String date,
-                                 BindingResult bindingResult){
-        weatherValidator.validateStringParams(regionName, temperature, date, bindingResult);
+    @PostMapping("/new")
+    public ResponseEntity<?> add(@RequestBody @Valid Weather weather, BindingResult bindingResult){
 
         if (bindingResult.hasErrors()){
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Validation error");
         }
         else {
-            int parsedTemperature = Integer.parseInt(temperature);
-            LocalDate parsedDate = LocalDate.parse(date);
-            List<Weather> weatherList = weatherService.getWeatherByRegionNameAndDate(regionName, parsedDate);
-            if (weatherList.isEmpty()) {
-                Weather weather = weatherService.add(regionName, parsedTemperature, parsedDate);
+            List<Weather> weathers =
+                    weatherService.getWeatherByRegionNameAndDate(weather.getRegionName(), weather.getDate());
+            if (weathers.isEmpty()) {
+                weatherService.add(weather);
                 return ResponseEntity.status(HttpStatus.CREATED).body(weather);
             } else {
                 return ResponseEntity
@@ -74,20 +73,14 @@ public class WeatherController {
             summary = "Update weather",
             description = "Update weather with specified region name, temperature and date"
     )
-    @PutMapping("/{regionName}")
-    public ResponseEntity<?> put(@PathVariable @Parameter(description = "Region name") String regionName,
-                                 @RequestBody @Parameter(description = "Temperature") String temperature,
-                                 @RequestBody @Parameter(description = "Date") String date,
-                                 BindingResult bindingResult){
-        weatherValidator.validateStringParams(regionName, temperature, date, bindingResult);
+    @PutMapping("/update")
+    public ResponseEntity<?> put(@RequestBody @Valid Weather weather, BindingResult bindingResult){
 
         if (bindingResult.hasErrors()){
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Validation error.");
         }
         else {
-            int parsedTemperature = Integer.parseInt(temperature);
-            LocalDate parsedDate = LocalDate.parse(date);
-            Weather weather = weatherService.update(regionName, parsedTemperature, parsedDate);
+            weatherService.update(weather);
             return ResponseEntity.status(HttpStatus.OK).body(weather);
         }
     }
@@ -106,9 +99,9 @@ public class WeatherController {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Validation error.");
         }
         else {
-            Optional<List<Weather>> weatherList = weatherService.deleteByRegionName(regionName);
-            if (weatherList.isPresent()) {
-                return ResponseEntity.status(HttpStatus.OK).body(weatherList);
+            Optional<List<Weather>> weathers = weatherService.deleteByRegionName(regionName);
+            if (weathers.isPresent()) {
+                return ResponseEntity.status(HttpStatus.OK).body(weathers);
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Weather with specified params was not found.");
             }

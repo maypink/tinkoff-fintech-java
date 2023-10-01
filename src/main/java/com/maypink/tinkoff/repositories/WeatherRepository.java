@@ -11,17 +11,16 @@ import java.util.function.Predicate;
 
 @Repository
 public class WeatherRepository {
-    private final List<Weather> weatherList = createListWeather();
+    private final List<Weather> weathers = createListWeather();
 
     public List<Weather> getWeatherByRegionAndDate(String regionName, LocalDate date){
-        return weatherList.stream()
+        return weathers.stream()
                 .filter(r -> r.getRegionName().equals(regionName) && r.getDate().equals(date))
                 .toList();
     }
 
-    public Weather addWeather(String regionName, Integer temperature, LocalDate date){
-        Weather weather = new Weather(regionName, temperature, date);
-        weatherList.add(weather);
+    public Weather addWeather(Weather weather){
+        weathers.add(weather);
         return weather;
     }
 
@@ -32,14 +31,14 @@ public class WeatherRepository {
 
     public Optional<List<Weather>> deleteWeather(String regionName){
         Predicate<Weather> filter = r -> r.getRegionName().equals(regionName);
-        List<Weather> weatherForDelete = weatherList
+        List<Weather> weatherForDelete = weathers
                 .stream()
                 .filter(filter)
                 .toList();
         if (weatherForDelete.isEmpty()){
             return Optional.empty();
         }
-        weatherList.removeIf(filter);
+        weathers.removeIf(filter);
         return Optional.of(weatherForDelete);
     }
 
