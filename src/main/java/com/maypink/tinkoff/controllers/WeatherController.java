@@ -35,9 +35,9 @@ public class WeatherController {
     public ResponseEntity<?> get(@PathVariable @Parameter(description = "Region name") String regionName){
         List<Weather> weatherObject = weatherService.getWeatherByRegionNameAndDate(regionName, LocalDate.now());
         if (weatherObject.isEmpty()){
-            return new ResponseEntity<>("Weather object is not found", HttpStatus.NOT_FOUND);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Weather object is not found");
         } else {
-            return new ResponseEntity<>(weatherObject.get(0), HttpStatus.OK);
+            return ResponseEntity.status(HttpStatus.OK).body(weatherObject.get(0));
         }
     }
 
@@ -53,7 +53,7 @@ public class WeatherController {
         weatherValidator.validateStringParams(regionName, temperature, date, bindingResult);
 
         if (bindingResult.hasErrors()){
-            return new ResponseEntity<>("Validation error", HttpStatus.UNPROCESSABLE_ENTITY);
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Validation error");
         }
         else {
             int parsedTemperature = Integer.parseInt(temperature);
@@ -61,9 +61,11 @@ public class WeatherController {
             List<Weather> weatherList = weatherService.getWeatherByRegionNameAndDate(regionName, parsedDate);
             if (weatherList.isEmpty()) {
                 Weather weather = weatherService.add(regionName, parsedTemperature, parsedDate);
-                return new ResponseEntity<>(weather, HttpStatus.CREATED);
+                return ResponseEntity.status(HttpStatus.CREATED).body(weather);
             } else {
-                return new ResponseEntity<>(HttpStatus.CONFLICT);
+                return ResponseEntity
+                        .status(HttpStatus.CONFLICT)
+                        .body("Weather object with the following region and date already exists");
             }
         }
     }
@@ -80,13 +82,13 @@ public class WeatherController {
         weatherValidator.validateStringParams(regionName, temperature, date, bindingResult);
 
         if (bindingResult.hasErrors()){
-            return new ResponseEntity<>("Validation error", HttpStatus.UNPROCESSABLE_ENTITY);
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Validation error.");
         }
         else {
             int parsedTemperature = Integer.parseInt(temperature);
             LocalDate parsedDate = LocalDate.parse(date);
             Weather weather = weatherService.update(regionName, parsedTemperature, parsedDate);
-            return new ResponseEntity<>(weather, HttpStatus.OK);
+            return ResponseEntity.status(HttpStatus.OK).body(weather);
         }
     }
 
@@ -101,14 +103,14 @@ public class WeatherController {
         weatherValidator.validateStringParams(regionName, bindingResult);
 
         if (bindingResult.hasErrors()){
-            return new ResponseEntity<>("Validation error", HttpStatus.UNPROCESSABLE_ENTITY);
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Validation error.");
         }
         else {
             Optional<List<Weather>> weatherList = weatherService.deleteByRegionName(regionName);
             if (weatherList.isPresent()) {
-                return new ResponseEntity<>(weatherList, HttpStatus.OK);
+                return ResponseEntity.status(HttpStatus.OK).body(weatherList);
             } else {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Weather with specified params was not found.");
             }
         }
     }
