@@ -11,5 +11,5 @@ public interface WeatherService {
     List<Weather> getWeatherByRegionNameAndDate(String regionName, LocalDate date);
     Weather add(String regionName, Integer temperature, LocalDate date);
     Weather update(String regionName, Integer temperature, LocalDate date);
-    Optional<List<Weather>> deleteByRegionName(String regionName, LocalDate date);
+    Optional<List<Weather>> deleteByRegionName(String regionName);
 }

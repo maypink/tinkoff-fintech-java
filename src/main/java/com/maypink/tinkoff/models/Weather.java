@@ -1,7 +1,11 @@
 package com.maypink.tinkoff.models;
 
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.annotation.NumberFormat;
 
 import java.time.LocalDate;
 import java.util.UUID;

@@ -25,6 +25,7 @@ dependencies {
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	implementation group: 'io.swagger.core.v3', name: 'swagger-annotations', version: '2.2.16'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	implementation group: 'org.hibernate', name: 'hibernate-validator', version: '8.0.1.Final'
 }
 
 tasks.named('test') {

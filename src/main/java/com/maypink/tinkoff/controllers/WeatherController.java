@@ -8,7 +8,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,7 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 
-@Controller
+@RestController
 @RequestMapping("/weather")
 public class WeatherController {
     private final WeatherServiceImpl weatherService;
@@ -48,8 +47,8 @@ public class WeatherController {
     )
     @PostMapping("/{regionName}")
     public ResponseEntity<?> add(@PathVariable @Parameter(description = "Region name") String regionName,
-                                 @RequestParam(value="temperature") @Parameter(description = "Temperature") String temperature,
-                                 @RequestParam(value="date") @Parameter(description = "Date") String date,
+                                 @RequestBody @Parameter(description = "Temperature") String temperature,
+                                 @RequestBody @Parameter(description = "Date") String date,
                                  BindingResult bindingResult){
         weatherValidator.validateStringParams(regionName, temperature, date, bindingResult);
 
@@ -64,7 +63,7 @@ public class WeatherController {
                 Weather weather = weatherService.add(regionName, parsedTemperature, parsedDate);
                 return new ResponseEntity<>(weather, HttpStatus.CREATED);
             } else {
-                return new ResponseEntity<>(HttpStatus.OK);
+                return new ResponseEntity<>(HttpStatus.CONFLICT);
             }
         }
     }
@@ -75,8 +74,8 @@ public class WeatherController {
     )
     @PutMapping("/{regionName}")
     public ResponseEntity<?> put(@PathVariable @Parameter(description = "Region name") String regionName,
-                                 @RequestParam(value="temperature") @Parameter(description = "Temperature") String temperature,
-                                 @RequestParam(value="date") @Parameter(description = "Date") String date,
+                                 @RequestBody @Parameter(description = "Temperature") String temperature,
+                                 @RequestBody @Parameter(description = "Date") String date,
                                  BindingResult bindingResult){
         weatherValidator.validateStringParams(regionName, temperature, date, bindingResult);
 
@@ -97,17 +96,15 @@ public class WeatherController {
     )
     @DeleteMapping("/{regionName}")
     public ResponseEntity<?> delete(@PathVariable @Parameter(description = "Region name") String regionName,
-                                    @RequestParam(value="date") @Parameter(description = "Date") String date,
                                     BindingResult bindingResult){
 
-        weatherValidator.validateStringParams(regionName, date, bindingResult);
+        weatherValidator.validateStringParams(regionName, bindingResult);
 
         if (bindingResult.hasErrors()){
             return new ResponseEntity<>("Validation error", HttpStatus.UNPROCESSABLE_ENTITY);
         }
         else {
-            LocalDate parsedDate = LocalDate.parse(date);
-            Optional<List<Weather>> weatherList = weatherService.deleteByRegionName(regionName, parsedDate);
+            Optional<List<Weather>> weatherList = weatherService.deleteByRegionName(regionName);
             if (weatherList.isPresent()) {
                 return new ResponseEntity<>(weatherList, HttpStatus.OK);
             } else {
