@@ -1,5 +1,7 @@
 package com.maypink.tinkoff.services;
 
+import com.maypink.tinkoff.client.WeatherClient;
+import com.maypink.tinkoff.dto.WeatherDto;
 import com.maypink.tinkoff.models.Weather;
 import com.maypink.tinkoff.repositories.WeatherRepository;
 import org.springframework.stereotype.Service;
@@ -13,8 +15,11 @@ import java.util.Optional;
 public class WeatherServiceImpl implements WeatherService{
     private final WeatherRepository weatherRepository;
 
-    public WeatherServiceImpl(WeatherRepository weatherRepository){
+    private final WeatherClient weatherClient;
+
+    public WeatherServiceImpl(WeatherRepository weatherRepository, WeatherClient weatherClient){
         this.weatherRepository = weatherRepository;
+        this.weatherClient = weatherClient;
     }
 
 
@@ -45,5 +50,10 @@ public class WeatherServiceImpl implements WeatherService{
     @Override
     public Optional<List<Weather>> deleteByRegionName(String regionName) {
         return weatherRepository.deleteWeather(regionName);
+    }
+
+    @Override
+    public WeatherDto getWeather(String key){
+        return weatherClient.getWeather(key);
     }
 }
