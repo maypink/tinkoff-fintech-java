@@ -1,17 +1,19 @@
 package com.maypink.tinkoff.controllers;
 
 
-import com.maypink.tinkoff.client.WeatherClient;
-import com.maypink.tinkoff.dto.WeatherDto;
+import com.maypink.tinkoff.controllers.resources.WeatherMapper;
+import com.maypink.tinkoff.controllers.resources.WeatherResource;
 import com.maypink.tinkoff.models.Weather;
 import com.maypink.tinkoff.services.WeatherServiceImpl;
 import com.maypink.tinkoff.util.WeatherValidator;
+import io.github.resilience4j.ratelimiter.RequestNotPermitted;
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -24,14 +26,11 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/weather")
+@RequiredArgsConstructor
 public class WeatherController {
     private final WeatherServiceImpl weatherService;
     private final WeatherValidator weatherValidator;
-
-    public WeatherController(WeatherServiceImpl weatherService, WeatherValidator weatherValidator) {
-        this.weatherService = weatherService;
-        this.weatherValidator = weatherValidator;
-    }
+    private final WeatherMapper weatherMapper;
 
     @Operation(
             summary = "Get weather",
@@ -112,8 +111,12 @@ public class WeatherController {
             summary = "Get weather from Weather Service"
     )
     @GetMapping
-    @RateLimiter(name = "rateLimiterApi")
-    public ResponseEntity<WeatherDto> getWeather(@RequestParam String query) {
-        return ResponseEntity.ok(weatherService.getWeather(query));
+    @RateLimiter(name = "rateLimiterApi", fallbackMethod = "weatherFallbackMethod")
+    public ResponseEntity<WeatherResource> getWeather(@RequestParam String query) {
+        return ResponseEntity.ok(weatherMapper.toResource(weatherService.getWeather(query)));
+    }
+
+    private ResponseEntity<WeatherResource> weatherFallbackMethod(String query, RequestNotPermitted rnp) {
+        return new ResponseEntity<>(HttpStatus.TOO_MANY_REQUESTS);
     }
 }

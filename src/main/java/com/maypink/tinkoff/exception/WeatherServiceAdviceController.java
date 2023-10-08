@@ -4,13 +4,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.client.HttpStatusCodeException;
 
 @ControllerAdvice
 public class WeatherServiceAdviceController {
 
-    @ExceptionHandler(value = HttpStatusCodeException.class)
-    public ResponseEntity<ErrorResponse> getErrorResponse(HttpStatusCodeException ex, HttpServletRequest request) {
-        return new ResponseEntity<>(new ErrorResponse(ex.getMessage(), ex.getStatusCode().value(), ex.getStatusCode().toString(), request.getRequestURI()), ex.getStatusCode());
+    @ExceptionHandler(value = ResponseWeatherErrorException.class)
+    public ResponseEntity<ErrorResponse> getErrorResponse(ResponseWeatherErrorException ex, HttpServletRequest request) {
+        ResponseEntity<WeatherErrorResponse> weatherErrorResponse = ex.getWeatherErrorResponse();
+        return new ResponseEntity<>(new ErrorResponse(weatherErrorResponse.getBody().error().message(), weatherErrorResponse.getStatusCode().value(), weatherErrorResponse.getBody().error().code(), request.getRequestURI()), weatherErrorResponse.getStatusCode());
     }
 }

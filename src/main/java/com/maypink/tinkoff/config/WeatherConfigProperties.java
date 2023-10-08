@@ -13,4 +13,7 @@ public class WeatherConfigProperties {
 
     private String apiKey;
 
+    private String host;
+
+    private String endpoint;
 }
