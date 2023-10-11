@@ -1,5 +1,6 @@
 package com.maypink.tinkoff.services;
 
+import com.maypink.tinkoff.dto.WeatherDto;
 import com.maypink.tinkoff.models.Weather;
 
 import java.time.LocalDate;
@@ -12,4 +13,5 @@ public interface WeatherService {
     Weather add(Weather weather);
     Weather update(Weather weather);
     Optional<List<Weather>> deleteByRegionName(String regionName);
+    WeatherDto getWeather(String key);
 }
