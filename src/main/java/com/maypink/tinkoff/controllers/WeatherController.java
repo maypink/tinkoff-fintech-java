@@ -111,12 +111,8 @@ public class WeatherController {
             summary = "Get weather from Weather Service"
     )
     @GetMapping
-    @RateLimiter(name = "rateLimiterApi", fallbackMethod = "weatherFallbackMethod")
-    public ResponseEntity<WeatherResource> getWeather(@RequestParam String query) {
+    @RateLimiter(name = "rateLimiterApi")
+    public ResponseEntity<?> getWeather(@RequestParam String query) {
         return ResponseEntity.ok(weatherMapper.toResource(weatherService.getWeather(query)));
-    }
-
-    private ResponseEntity<WeatherResource> weatherFallbackMethod(String query, RequestNotPermitted rnp) {
-        return new ResponseEntity<>(HttpStatus.TOO_MANY_REQUESTS);
     }
 }
