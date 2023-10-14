@@ -6,7 +6,7 @@ import com.maypink.jdbc.exception.ResponseWeatherErrorException;
 import com.maypink.jdbc.model.City;
 import com.maypink.jdbc.model.CityWeather;
 import com.maypink.jdbc.model.WeatherType;
-import com.maypink.jdbc.repository.CityWeatherRepository;
+import com.maypink.jdbc.repository.impl.CityWeatherRepositoryImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CityWeatherService {
     @Autowired
-    private final CityWeatherRepository cityWeatherRepository;
+    private final CityWeatherRepositoryImpl cityWeatherRepositoryImpl;
 
     @Autowired
     private final CityService cityService;
@@ -36,7 +36,7 @@ public class CityWeatherService {
 
             weatherTypeService.save(cityWeather.getWeatherType());
 
-            cityWeatherRepository.save(cityWeather);
+            cityWeatherRepositoryImpl.save(cityWeather);
             return cityWeatherMapper.toDto(cityWeather);
         } else {
             throw new ResponseWeatherErrorException(ResponseEntity.status(409).header("Attempt to insert duplicate").build());
@@ -44,7 +44,7 @@ public class CityWeatherService {
     }
 
     public CityWeatherDto update(CityWeather cityWeather) {
-        List<CityWeather> cityWeathers = cityWeatherRepository.getCityWeatherByCityAndWeatherType(cityWeather.getCity(), cityWeather.getWeatherType());
+        List<CityWeather> cityWeathers = cityWeatherRepositoryImpl.getCityWeatherByCityAndWeatherType(cityWeather.getCity(), cityWeather.getWeatherType());
 
         // if there is no such Weather object
         if (cityWeathers.isEmpty()) {
@@ -55,35 +55,35 @@ public class CityWeatherService {
             CityWeather cityWeatherToUpdate = cityWeathers.get(0);
             cityWeatherToUpdate.setWeatherType(cityWeather.getWeatherType());
             weatherTypeService.save(cityWeather.getWeatherType());
-            cityWeatherRepository.updateByCityAndWeatherType(cityWeatherToUpdate.getCity(), cityWeatherToUpdate.getWeatherType());
+            cityWeatherRepositoryImpl.updateByCityAndWeatherType(cityWeatherToUpdate.getCity(), cityWeatherToUpdate.getWeatherType());
             return cityWeatherMapper.toDto(cityWeatherToUpdate);
         }
     }
 
     public void delete(CityWeather cityWeather) throws ResponseWeatherErrorException{
-        List<CityWeather> cityWeathers = cityWeatherRepository.getCityWeatherByCityAndWeatherType(cityWeather.getCity(), cityWeather.getWeatherType());
+        List<CityWeather> cityWeathers = cityWeatherRepositoryImpl.getCityWeatherByCityAndWeatherType(cityWeather.getCity(), cityWeather.getWeatherType());
 
         // if there is no such Weather object
         if (cityWeathers.isEmpty()) {
             throw new ResponseWeatherErrorException(ResponseEntity.status(404).header("No such object to delete.").build());
         } else {
-            cityWeatherRepository.delete(cityWeather);
+            cityWeatherRepositoryImpl.delete(cityWeather);
         }
     }
 
     public List<CityWeatherDto> findAll(){
 
-        List<CityWeather> cityWeathers = (List<CityWeather>) cityWeatherRepository.findAll();
+        List<CityWeather> cityWeathers = (List<CityWeather>) cityWeatherRepositoryImpl.findAll();
         return cityWeathers.stream().map(cityWeatherMapper::toDto).toList();
     }
 
     public List<CityWeatherDto> show(City city, WeatherType weatherType){
-        List<CityWeather> cityWeathers = cityWeatherRepository.getCityWeatherByCityAndWeatherType(city, weatherType);
+        List<CityWeather> cityWeathers = cityWeatherRepositoryImpl.getCityWeatherByCityAndWeatherType(city, weatherType);
         return cityWeathers.stream().map(cityWeather -> cityWeatherMapper.toDto(cityWeather)).toList();
     }
 
     public List<CityWeatherDto> show(String cityName){
-        List<CityWeather> cityWeathers = cityWeatherRepository.getCityWeatherByCityName(cityName);
+        List<CityWeather> cityWeathers = cityWeatherRepositoryImpl.getCityWeatherByCityName(cityName);
         if (cityWeathers.isEmpty()) {
             throw new ResponseWeatherErrorException(ResponseEntity.status(404).header("No such object.").build());
         } else {
@@ -92,13 +92,13 @@ public class CityWeatherService {
     }
 
     public CityWeatherDto deleteByCityName(String cityName) throws ResponseWeatherErrorException{
-        List<CityWeather> cityWeathers = cityWeatherRepository.getCityWeatherByCityName(cityName);
+        List<CityWeather> cityWeathers = cityWeatherRepositoryImpl.getCityWeatherByCityName(cityName);
 
         // if there is no such Weather object
         if (cityWeathers.isEmpty()) {
             throw new ResponseWeatherErrorException(ResponseEntity.status(404).header("No such object to delete.").build());
         } else {
-            CityWeather cityWeather = cityWeatherRepository.deleteCityWeatherByCityName(cityName);
+            CityWeather cityWeather = cityWeatherRepositoryImpl.deleteCityWeatherByCityName(cityName);
             return cityWeatherMapper.toDto(cityWeather);
         }
     }

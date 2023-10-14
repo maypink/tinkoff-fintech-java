@@ -15,12 +15,4 @@ public class HibernateApplication {
 		SpringApplication.run(HibernateApplication.class, args);
 	}
 
-//	@Bean
-//	public CommandLineRunner commandLineRunner(CityWeatherService cityWeatherService){
-//		return args -> {
-//			System.out.println(cityWeatherService.findAll());
-//			log.info("Weather={}", cityWeatherService.findAll());
-//		};
-//	}
-
 }
