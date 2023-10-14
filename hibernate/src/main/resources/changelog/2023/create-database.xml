@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet id="Create table Cities" author="maypink">
+        <createTable tableName="Cities">
+            <column name="id" type="int" autoIncrement="true">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_CITIES"/>
+            </column>
+            <column name="name" type="varchar(20)" />
+        </createTable>
+    </changeSet>
+
+    <changeSet id="Create table WeatherTypes" author="maypink">
+        <sql>CREATE TYPE weather_type AS ENUM ('windy', 'sunny', 'rainy', 'foggy')</sql>
+        <createTable tableName="WeatherTypes">
+            <column name="id" type="int" autoIncrement="true">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_WEATHER_TYPE"/>
+            </column>
+            <column name="type" type="weather_type" />
+        </createTable>
+    </changeSet>
+
+    <changeSet id="Create table CityWeather" author="maypink">
+        <createTable tableName="CityWeather">
+            <column name="id" type="int" autoIncrement="true">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_WEATHER"/>
+            </column>
+            <column name="cityId" type="int">
+                <constraints nullable="false" foreignKeyName="FK_CITY_ID" references="Cities(id)"/>
+            </column>
+            <column name="WeatherTypeId" type="int">
+                <constraints nullable="false" foreignKeyName="FK_WEATHER_TYPE_ID" references="WeatherTypes(id)"/>
+            </column>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>
