@@ -6,7 +6,7 @@
 
     <changeSet id="Create table Cities" author="maypink">
         <createTable tableName="Cities">
-            <column name="id" type="int" autoIncrement="true">
+            <column name="id" type="long" autoIncrement="true">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="PK_CITIES"/>
             </column>
             <column name="name" type="varchar(20)" />
@@ -14,24 +14,23 @@
     </changeSet>
 
     <changeSet id="Create table WeatherTypes" author="maypink">
-        <sql>CREATE TYPE weather_type AS ENUM ('windy', 'sunny', 'rainy', 'foggy')</sql>
         <createTable tableName="WeatherTypes">
-            <column name="id" type="int" autoIncrement="true">
+            <column name="id" type="long" autoIncrement="true">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="PK_WEATHER_TYPE"/>
             </column>
-            <column name="type" type="weather_type" />
+            <column name="type" type="varchar(20)" />
         </createTable>
     </changeSet>
 
     <changeSet id="Create table CityWeather" author="maypink">
         <createTable tableName="CityWeather">
-            <column name="id" type="int" autoIncrement="true">
+            <column name="id" type="long" autoIncrement="true">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="PK_WEATHER"/>
             </column>
-            <column name="cityId" type="int">
+            <column name="cityId" type="long">
                 <constraints nullable="false" foreignKeyName="FK_CITY_ID" references="Cities(id)"/>
             </column>
-            <column name="WeatherTypeId" type="int">
+            <column name="weatherTypeId" type="long">
                 <constraints nullable="false" foreignKeyName="FK_WEATHER_TYPE_ID" references="WeatherTypes(id)"/>
             </column>
         </createTable>

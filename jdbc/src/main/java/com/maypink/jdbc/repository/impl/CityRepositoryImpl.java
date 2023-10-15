@@ -17,12 +17,9 @@ public class CityRepositoryImpl implements CityRepository {
     @Autowired
     JdbcTemplate jdbcTemplate;
 
-    @Autowired
-    CityDto cityDto;
-
     @Override
     public void save(City city){
-        jdbcTemplate.update("INSERT INTO Cities VALUES(1, ?)", city.getId(), city.getName());
+        jdbcTemplate.update("INSERT INTO Cities (id, name) VALUES(?, ?)", city.getId(), city.getName());
     }
 
     @Override

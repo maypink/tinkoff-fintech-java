@@ -16,16 +16,13 @@ public class WeatherTypeRepositoryImpl implements WeatherTypeRepository {
     @Autowired
     JdbcTemplate jdbcTemplate;
 
-    @Autowired
-    WeatherTypeDto weatherTypeDto;
-
     @Override
     public void save(WeatherType weatherType){
-        jdbcTemplate.update("INSERT INTO WeatherTypes VALUES(1, ?)", weatherType.getId(), weatherType.getType());
+        jdbcTemplate.update("INSERT INTO WeatherTypes (id, type) VALUES(?, ?)", weatherType.getId(), weatherType.getType());
     }
 
     @Override
     public List<WeatherTypeDto> getWeatherTypeByType(String weatherType) {
-        return jdbcTemplate.query("SELECT * FROM Cities WHERE type=?", new BeanPropertyRowMapper<>(WeatherTypeDto.class), weatherType);
+        return jdbcTemplate.query("SELECT * FROM WeatherTypes WHERE type=?", new BeanPropertyRowMapper<>(WeatherTypeDto.class), weatherType);
     }
 }
