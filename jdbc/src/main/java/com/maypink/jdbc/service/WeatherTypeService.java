@@ -1,5 +1,6 @@
 package com.maypink.jdbc.service;
 
+import com.maypink.jdbc.dto.WeatherTypeDto;
 import com.maypink.jdbc.model.WeatherType;
 import com.maypink.jdbc.repository.impl.WeatherTypeRepositoryImpl;
 import lombok.RequiredArgsConstructor;
@@ -15,8 +16,8 @@ public class WeatherTypeService {
     private final WeatherTypeRepositoryImpl weatherTypeRepositoryImpl;
 
     public void save(WeatherType weatherType){
-        List<WeatherType> weatherTypes = weatherTypeRepositoryImpl.getWeatherTypeByType(weatherType.getType());
-        if (weatherTypes.isEmpty()){
+        List<WeatherTypeDto> weatherTypesDtos = weatherTypeRepositoryImpl.getWeatherTypeByType(weatherType.getType());
+        if (weatherTypesDtos.isEmpty()){
             weatherTypeRepositoryImpl.save(weatherType);
         }
     }

@@ -9,8 +9,8 @@ import org.springframework.stereotype.Component;
 @Setter
 @RequiredArgsConstructor
 @Component
-public class CityWeatherDto {
+public class WeatherTypeDto {
     Long id;
-    Long cityId;
-    Long weatherTypeId;
+
+    String type;
 }

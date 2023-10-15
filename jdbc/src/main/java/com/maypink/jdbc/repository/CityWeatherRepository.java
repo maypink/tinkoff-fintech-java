@@ -1,5 +1,6 @@
 package com.maypink.jdbc.repository;
 
+import com.maypink.jdbc.dto.CityWeatherDto;
 import com.maypink.jdbc.model.City;
 import com.maypink.jdbc.model.CityWeather;
 import com.maypink.jdbc.model.WeatherType;
@@ -10,17 +11,15 @@ import java.util.List;
 @Repository
 public interface CityWeatherRepository {
 
-    List<CityWeather> getCityWeatherByCityAndWeatherType(City city, WeatherType weatherType);
+    List<CityWeatherDto> getCityWeatherByCityAndWeatherType(City city, WeatherType weatherType);
 
-    List<CityWeather> getCityWeatherByCityName(String cityName);
+    List<CityWeatherDto> getCityWeatherByCityName(String cityName);
 
-    CityWeather updateByCityAndWeatherType(City city, WeatherType weatherType);
-
-    CityWeather deleteCityWeatherByCityName(String cityName);
+    CityWeatherDto deleteCityWeatherByCityName(String cityName);
 
     void save(CityWeather cityWeather);
 
     void delete(CityWeather cityWeather);
 
-    List<CityWeather> findAll();
+    List<CityWeatherDto> findAll();
 }
