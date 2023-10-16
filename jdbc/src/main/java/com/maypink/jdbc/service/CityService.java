@@ -23,5 +23,11 @@ public class CityService {
         }
     }
 
+    public List<CityDto> getCityByName(String cityName){
+        return cityRepositoryImpl.getCityByName(cityName);
+    }
+
+
+
 
 }

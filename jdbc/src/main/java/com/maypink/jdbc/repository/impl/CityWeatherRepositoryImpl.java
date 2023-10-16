@@ -41,16 +41,11 @@ public class CityWeatherRepositoryImpl implements CityWeatherRepository {
         if (cityWeathersDtos.isEmpty()) {
             return emptyList();
         } else return cityWeathersDtos;
-    };
+    }
 
-    public List<CityWeatherDto> getCityWeatherByCityName(String cityName) {
-        List<Integer> cityId = jdbcTemplate.query("SELECT id FROM Cities WHERE name=?", new BeanPropertyRowMapper<>(Integer.class), cityName);
-        if (cityId.isEmpty()) {
-            return emptyList();
-        } else {
-            return jdbcTemplate.query("SELECT * FROM CityWeather WHERE cityId=?",
-                    new BeanPropertyRowMapper<>(CityWeatherDto.class), cityId);
-        }
+    public List<CityWeatherDto> getCityWeatherById(Long cityId) {
+        return jdbcTemplate.query("SELECT * FROM CityWeather WHERE cityId=?",
+                new BeanPropertyRowMapper<>(CityWeatherDto.class), cityId);
     };
 
     public CityWeatherDto updateByCityIdAndWeatherTypeId(Long cityId, Long weatherTypeId) {
@@ -60,7 +55,7 @@ public class CityWeatherRepositoryImpl implements CityWeatherRepository {
     };
 
     public CityWeatherDto deleteCityWeatherByCityName(String cityName) throws ResponseWeatherErrorException{
-        List<Integer> cityId = jdbcTemplate.query("SELECT id FROM Cities WHERE name=?", new BeanPropertyRowMapper<>(Integer.class), cityName);
+        List<Long> cityId = jdbcTemplate.query("SELECT id FROM Cities WHERE name=?", new BeanPropertyRowMapper<>(Long.class), cityName);
         if (!cityId.isEmpty()) {
             List<CityWeatherDto> cityWeathers = jdbcTemplate.query("select * from CityWeather where cityId = ?", new BeanPropertyRowMapper<>(CityWeatherDto.class), cityId);
             jdbcTemplate.update("delete from CityWeather where cityId = ?", cityId);

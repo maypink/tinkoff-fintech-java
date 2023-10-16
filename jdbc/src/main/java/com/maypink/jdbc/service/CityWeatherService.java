@@ -1,5 +1,6 @@
 package com.maypink.jdbc.service;
 
+import com.maypink.jdbc.dto.CityDto;
 import com.maypink.jdbc.dto.CityWeatherDto;
 import com.maypink.jdbc.exception.ResponseWeatherErrorException;
 import com.maypink.jdbc.model.City;
@@ -81,22 +82,15 @@ public class CityWeatherService {
     }
 
     public List<CityWeatherDto> show(String cityName){
-        List<CityWeatherDto> cityWeathersDtos = cityWeatherRepositoryImpl.getCityWeatherByCityName(cityName);
-        if (cityWeathersDtos.isEmpty()) {
+        List<CityDto> cityDto = cityService.getCityByName(cityName);
+        if (cityDto.isEmpty()) {
             throw new ResponseWeatherErrorException(ResponseEntity.status(404).header("No such object.").build());
         } else {
-            return cityWeathersDtos;
+            return cityWeatherRepositoryImpl.getCityWeatherById(cityDto.get(0).getId());
         }
     }
 
     public CityWeatherDto deleteByCityName(String cityName) throws ResponseWeatherErrorException{
-        List<CityWeatherDto> cityWeathersDtos = cityWeatherRepositoryImpl.getCityWeatherByCityName(cityName);
-
-        // if there is no such Weather object
-        if (cityWeathersDtos.isEmpty()) {
-            throw new ResponseWeatherErrorException(ResponseEntity.status(404).header("No such object to delete.").build());
-        } else {
-            return cityWeatherRepositoryImpl.deleteCityWeatherByCityName(cityName);
-        }
+        return cityWeatherRepositoryImpl.deleteCityWeatherByCityName(cityName);
     }
 }

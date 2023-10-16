@@ -13,7 +13,7 @@ public interface CityWeatherRepository {
 
     List<CityWeatherDto> getCityWeatherByCityAndWeatherType(City city, WeatherType weatherType);
 
-    List<CityWeatherDto> getCityWeatherByCityName(String cityName);
+    List<CityWeatherDto> getCityWeatherById(Long cityName);
 
     CityWeatherDto deleteCityWeatherByCityName(String cityName);
 
