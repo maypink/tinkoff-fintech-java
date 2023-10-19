@@ -13,12 +13,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class WeatherServiceAdviceController {
 
-    @ExceptionHandler(value = ResponseWeatherErrorException.class)
-    public ResponseEntity<ErrorResponse> getErrorResponseForWeatherApi(ResponseWeatherErrorException ex, HttpServletRequest request) {
-        ResponseEntity<WeatherErrorResponse> weatherErrorResponse = ex.getWeatherErrorResponse();
-        return new ResponseEntity<>(new ErrorResponse(weatherErrorResponse.getStatusCode().value(), weatherErrorResponse.getStatusCode().toString(), weatherErrorResponse.getStatusCode().toString(), request.getRequestURI()), weatherErrorResponse.getStatusCode());
-    }
-
     @ExceptionHandler(value = WeatherNotFoundException.class)
     public ResponseEntity<ErrorResponse> getErrorResponseForWeatherApi(WeatherNotFoundException ex, HttpServletRequest request) {
         return handleException(ex, request, HttpStatus.NOT_FOUND);

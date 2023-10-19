@@ -2,10 +2,10 @@ package com.maypink.hibernate.repository;
 
 import com.maypink.hibernate.model.WeatherType;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
+@Repository
 public interface WeatherTypeRepository extends JpaRepository<WeatherType, Long> {
 
-    public boolean exists(WeatherType weatherType);
+    boolean existsById(Long id);
 }

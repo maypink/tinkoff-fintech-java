@@ -2,10 +2,10 @@ package com.maypink.hibernate.repository;
 
 import com.maypink.hibernate.model.City;;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
+@Repository
 public interface CityRepository extends JpaRepository<City, Long> {
 
-    public boolean exists(City city);
+    boolean existsById(Long id);
 }

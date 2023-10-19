@@ -1,6 +1,5 @@
 package com.maypink.jdbc.repository.impl;
 
-import com.maypink.jdbc.exception.ResponseWeatherErrorException;
 import com.maypink.jdbc.exception.customException.WeatherException;
 import com.maypink.jdbc.exception.customException.WeatherNotFoundException;
 import com.maypink.jdbc.model.City;
@@ -9,7 +8,6 @@ import com.maypink.jdbc.model.WeatherType;
 import com.maypink.jdbc.repository.CityWeatherRepository;
 import com.maypink.jdbc.dto.CityWeatherDto;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;

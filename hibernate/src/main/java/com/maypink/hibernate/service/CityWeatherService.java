@@ -2,6 +2,8 @@ package com.maypink.hibernate.service;
 import com.maypink.hibernate.controller.CityWeatherMapper;
 import com.maypink.hibernate.dto.CityWeatherDto;
 import com.maypink.hibernate.exception.ResponseWeatherErrorException;
+import com.maypink.hibernate.exception.customException.WeatherDuplicateException;
+import com.maypink.hibernate.exception.customException.WeatherNotFoundException;
 import com.maypink.hibernate.model.City;
 import com.maypink.hibernate.model.CityWeather;
 import com.maypink.hibernate.model.WeatherType;
@@ -9,7 +11,6 @@ import com.maypink.hibernate.repository.CityWeatherRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -40,7 +41,7 @@ public class CityWeatherService {
             cityWeatherRepository.save(cityWeather);
             return cityWeatherMapper.toDto(cityWeather);
         } else {
-            throw new ResponseWeatherErrorException(ResponseEntity.status(409).header("Attempt to insert duplicate").build());
+            throw new WeatherDuplicateException("Attempt to insert CityWeather with already existing id.");
         }
     }
 
@@ -62,20 +63,6 @@ public class CityWeatherService {
         }
     }
 
-    public void delete(CityWeather cityWeather) throws ResponseWeatherErrorException{
-        // if there is no such Weather object
-        if (!cityWeatherRepository.exists(cityWeather)) {
-            throw new ResponseWeatherErrorException(ResponseEntity.status(404).header("No such object to delete.").build());
-        } else {
-            cityWeatherRepository.delete(cityWeather);
-        }
-    }
-
-    public List<CityWeatherDto> findAll(){
-        List<CityWeather> cityWeathers = cityWeatherRepository.findAll();
-        return cityWeathers.stream().map(cityWeatherMapper::toDto).toList();
-    }
-
     public List<CityWeatherDto> getCityWeathers(City city, WeatherType weatherType){
         List<CityWeather> cityWeathers = cityWeatherRepository.getCityWeatherByCityAndWeatherType(city, weatherType);
         return cityWeathers.stream().map(cityWeatherMapper::toDto).toList();
@@ -84,7 +71,7 @@ public class CityWeatherService {
     public List<CityWeatherDto> getCityWeathers(String cityName){
         List<CityWeather> cityWeathers = cityWeatherRepository.getCityWeatherByCityName(cityName);
         if (cityWeathers.isEmpty()) {
-            throw new ResponseWeatherErrorException(ResponseEntity.status(404).header("No such object.").build());
+            throw new WeatherNotFoundException("No such object.");
         } else {
             return cityWeathers.stream().map(cityWeatherMapper::toDto).toList();
         }
@@ -95,9 +82,10 @@ public class CityWeatherService {
 
         // if there is no such Weather object
         if (cityWeathers.isEmpty()) {
-            throw new ResponseWeatherErrorException(ResponseEntity.status(404).header("No such object to delete.").build());
+            throw new WeatherNotFoundException("No such object CityWeather to delete.");
         } else {
-            CityWeather cityWeather = cityWeatherRepository.deleteCityWeatherByCityName(cityName);
+            CityWeather cityWeather = cityWeathers.get(0);
+            cityWeatherRepository.deleteCityWeatherById(cityWeather.getId());
             return cityWeatherMapper.toDto(cityWeather);
         }
     }

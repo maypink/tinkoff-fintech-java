@@ -17,14 +17,15 @@ public interface CityWeatherRepository extends JpaRepository<CityWeather, Long> 
 
     List<CityWeather> getCityWeatherByCityAndWeatherType(City city, WeatherType weatherType);
 
-    boolean exists(CityWeather cityWeather);
-
     List<CityWeather> getCityWeatherByCityName(String cityName);
 
     @Modifying
     @Transactional
     @Query("update CityWeather c set c.weatherType = ?2 where c.city = ?1")
-    CityWeather updateByCityAndWeatherType(City city, WeatherType weatherType);
+    void updateByCityAndWeatherType(City city, WeatherType weatherType);
 
-    CityWeather deleteCityWeatherByCityName(String cityName);
+    @Modifying
+    @Transactional
+    @Query("delete from CityWeather where id = ?1")
+    void deleteCityWeatherById(Long id);
 }
