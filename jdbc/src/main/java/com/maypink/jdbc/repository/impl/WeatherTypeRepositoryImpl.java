@@ -25,4 +25,9 @@ public class WeatherTypeRepositoryImpl implements WeatherTypeRepository {
     public List<WeatherTypeDto> getWeatherTypeByType(String weatherType) {
         return jdbcTemplate.query("SELECT * FROM WeatherTypes WHERE type=?", new BeanPropertyRowMapper<>(WeatherTypeDto.class), weatherType);
     }
+
+    @Override
+    public List<WeatherTypeDto> getWeatherTypeById(Long weatherTypeId) {
+        return jdbcTemplate.query("SELECT * FROM WeatherTypes WHERE id=?", new BeanPropertyRowMapper<>(WeatherTypeDto.class), weatherTypeId);
+    }
 }

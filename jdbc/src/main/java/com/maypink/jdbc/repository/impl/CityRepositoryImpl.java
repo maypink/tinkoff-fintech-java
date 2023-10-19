@@ -27,5 +27,9 @@ public class CityRepositoryImpl implements CityRepository {
         return jdbcTemplate.query("SELECT * FROM Cities WHERE name=?", new BeanPropertyRowMapper<>(CityDto.class), cityName);
     }
 
+    public List<CityDto> getCityById(Long cityId){
+        return jdbcTemplate.query("SELECT * FROM Cities WHERE id=?", new BeanPropertyRowMapper<>(CityDto.class), cityId);
+    }
+
 
 }

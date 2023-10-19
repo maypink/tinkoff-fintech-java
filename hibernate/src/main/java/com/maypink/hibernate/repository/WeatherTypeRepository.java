@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface WeatherTypeRepository extends JpaRepository<WeatherType, Long> {
 
-    public List<WeatherType> getWeatherTypeByType(String weatherType);
+    public boolean exists(WeatherType weatherType);
 }

@@ -1,6 +1,7 @@
 package com.maypink.jdbc.service;
 
 import com.maypink.jdbc.dto.WeatherTypeDto;
+import com.maypink.jdbc.exception.customException.WeatherDuplicateException;
 import com.maypink.jdbc.model.WeatherType;
 import com.maypink.jdbc.repository.impl.WeatherTypeRepositoryImpl;
 import lombok.RequiredArgsConstructor;
@@ -16,9 +17,9 @@ public class WeatherTypeService {
     private final WeatherTypeRepositoryImpl weatherTypeRepositoryImpl;
 
     public void save(WeatherType weatherType){
-        List<WeatherTypeDto> weatherTypesDtos = weatherTypeRepositoryImpl.getWeatherTypeByType(weatherType.getType());
+        List<WeatherTypeDto> weatherTypesDtos = weatherTypeRepositoryImpl.getWeatherTypeById(weatherType.getId());
         if (weatherTypesDtos.isEmpty()){
             weatherTypeRepositoryImpl.save(weatherType);
-        }
+        } else throw new WeatherDuplicateException("Attempt to insert WeatherType with already existing id.");
     }
 }

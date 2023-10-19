@@ -17,8 +17,7 @@ public class WeatherTypeService {
     private final WeatherTypeRepository weatherTypeRepository;
 
     public void save(WeatherType weatherType){
-        List<WeatherType> weatherTypes = weatherTypeRepository.getWeatherTypeByType(weatherType.getType());
-        if (weatherTypes.isEmpty()){
+        if (!weatherTypeRepository.exists(weatherType)){
             weatherTypeRepository.save(weatherType);
         }
     }

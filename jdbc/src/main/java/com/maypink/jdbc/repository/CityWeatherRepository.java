@@ -21,5 +21,7 @@ public interface CityWeatherRepository {
 
     void delete(CityWeather cityWeather);
 
+    int updateWeatherTypeId(CityWeatherDto cityWeatherDto);
+
     List<CityWeatherDto> findAll();
 }

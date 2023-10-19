@@ -16,8 +16,7 @@ public class CityService {
     private final CityRepository cityRepository;
 
     public void save(City city){
-        List<City> cities = cityRepository.getCityByName(city.getName());
-        if (cities.isEmpty()){
+        if (!cityRepository.exists(city)){
             cityRepository.save(city);
         }
     }

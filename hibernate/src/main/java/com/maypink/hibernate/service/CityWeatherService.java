@@ -2,16 +2,13 @@ package com.maypink.hibernate.service;
 import com.maypink.hibernate.controller.CityWeatherMapper;
 import com.maypink.hibernate.dto.CityWeatherDto;
 import com.maypink.hibernate.exception.ResponseWeatherErrorException;
-import com.maypink.hibernate.exception.WeatherErrorResponse;
-import com.maypink.hibernate.exception.WeatherErrorResponseDescription;
 import com.maypink.hibernate.model.City;
 import com.maypink.hibernate.model.CityWeather;
 import com.maypink.hibernate.model.WeatherType;
 import com.maypink.hibernate.repository.CityWeatherRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -32,8 +29,9 @@ public class CityWeatherService {
     @Autowired
     private final CityWeatherMapper cityWeatherMapper;
 
+    @Transactional
     public CityWeatherDto save(CityWeather cityWeather) throws ResponseWeatherErrorException{
-        List<CityWeatherDto> cityWeathersDtos = show(cityWeather.getCity(), cityWeather.getWeatherType());
+        List<CityWeatherDto> cityWeathersDtos = getCityWeathers(cityWeather.getCity(), cityWeather.getWeatherType());
         if (cityWeathersDtos.isEmpty()) {
             cityService.save(cityWeather.getCity());
 
@@ -46,6 +44,7 @@ public class CityWeatherService {
         }
     }
 
+    @Transactional
     public CityWeatherDto update(CityWeather cityWeather) {
         List<CityWeather> cityWeathers = cityWeatherRepository.getCityWeatherByCityAndWeatherType(cityWeather.getCity(), cityWeather.getWeatherType());
 
@@ -53,7 +52,7 @@ public class CityWeatherService {
         if (cityWeathers.isEmpty()) {
             return save(cityWeather);
         } else {
-            // there must be only zero or one weather with specified date and region, since adding new object with the same data
+            // there must be only zero or one weather with specified data, since adding new object with the same data
             // is impossible
             CityWeather cityWeatherToUpdate = cityWeathers.get(0);
             cityWeatherToUpdate.setWeatherType(cityWeather.getWeatherType());
@@ -64,10 +63,8 @@ public class CityWeatherService {
     }
 
     public void delete(CityWeather cityWeather) throws ResponseWeatherErrorException{
-        List<CityWeather> cityWeathers = cityWeatherRepository.getCityWeatherByCityAndWeatherType(cityWeather.getCity(), cityWeather.getWeatherType());
-
         // if there is no such Weather object
-        if (cityWeathers.isEmpty()) {
+        if (!cityWeatherRepository.exists(cityWeather)) {
             throw new ResponseWeatherErrorException(ResponseEntity.status(404).header("No such object to delete.").build());
         } else {
             cityWeatherRepository.delete(cityWeather);
@@ -75,17 +72,16 @@ public class CityWeatherService {
     }
 
     public List<CityWeatherDto> findAll(){
-
         List<CityWeather> cityWeathers = cityWeatherRepository.findAll();
         return cityWeathers.stream().map(cityWeatherMapper::toDto).toList();
     }
 
-    public List<CityWeatherDto> show(City city, WeatherType weatherType){
+    public List<CityWeatherDto> getCityWeathers(City city, WeatherType weatherType){
         List<CityWeather> cityWeathers = cityWeatherRepository.getCityWeatherByCityAndWeatherType(city, weatherType);
-        return cityWeathers.stream().map(cityWeather -> cityWeatherMapper.toDto(cityWeather)).toList();
+        return cityWeathers.stream().map(cityWeatherMapper::toDto).toList();
     }
 
-    public List<CityWeatherDto> show(String cityName){
+    public List<CityWeatherDto> getCityWeathers(String cityName){
         List<CityWeather> cityWeathers = cityWeatherRepository.getCityWeatherByCityName(cityName);
         if (cityWeathers.isEmpty()) {
             throw new ResponseWeatherErrorException(ResponseEntity.status(404).header("No such object.").build());

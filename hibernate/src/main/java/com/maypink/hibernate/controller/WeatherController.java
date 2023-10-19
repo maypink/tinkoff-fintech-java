@@ -44,7 +44,7 @@ public class WeatherController {
     @GetMapping("/{cityName}")
     public ResponseEntity<?> get(@PathVariable @Parameter(description = "cityName") @NotEmpty @Size(max = 20) String cityName) {
 
-        List<CityWeatherDto> cityWeathersDtos = cityWeatherService.show(cityName);
+        List<CityWeatherDto> cityWeathersDtos = cityWeatherService.getCityWeathers(cityName);
         return ResponseEntity.status(HttpStatus.OK).body(cityWeathersDtos.get(0));
     }
 

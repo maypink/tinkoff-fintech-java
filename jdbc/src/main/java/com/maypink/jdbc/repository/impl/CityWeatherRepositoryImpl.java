@@ -1,6 +1,8 @@
 package com.maypink.jdbc.repository.impl;
 
 import com.maypink.jdbc.exception.ResponseWeatherErrorException;
+import com.maypink.jdbc.exception.customException.WeatherException;
+import com.maypink.jdbc.exception.customException.WeatherNotFoundException;
 import com.maypink.jdbc.model.City;
 import com.maypink.jdbc.model.CityWeather;
 import com.maypink.jdbc.model.WeatherType;
@@ -13,8 +15,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-
-import static java.util.Collections.emptyList;
 
 @Repository
 public class CityWeatherRepositoryImpl implements CityWeatherRepository {
@@ -36,11 +36,13 @@ public class CityWeatherRepositoryImpl implements CityWeatherRepository {
     }
 
     public List<CityWeatherDto> getCityWeatherByCityAndWeatherType(City city, WeatherType weatherType) {
-        List<CityWeatherDto> cityWeathersDtos = jdbcTemplate.query("SELECT * FROM CityWeather WHERE cityId=? and weatherTypeId=?",
+        return jdbcTemplate.query("SELECT * FROM CityWeather WHERE cityId=? and weatherTypeId=?",
                 new BeanPropertyRowMapper<>(CityWeatherDto.class),  city.getId(), weatherType.getId());
-        if (cityWeathersDtos.isEmpty()) {
-            return emptyList();
-        } else return cityWeathersDtos;
+    }
+
+    public boolean exists(CityWeather cityWeather){
+        List<CityWeatherDto> cityWeatherDtos = getCityWeatherById(cityWeather.getId());
+        return !cityWeatherDtos.isEmpty();
     }
 
     public List<CityWeatherDto> getCityWeatherById(Long cityId) {
@@ -48,20 +50,19 @@ public class CityWeatherRepositoryImpl implements CityWeatherRepository {
                 new BeanPropertyRowMapper<>(CityWeatherDto.class), cityId);
     };
 
-    public CityWeatherDto updateByCityIdAndWeatherTypeId(Long cityId, Long weatherTypeId) {
-        List<CityWeatherDto> cityWeathersDtos = jdbcTemplate.query("update CityWeather set cityId = ?, weatherTypeId = ?", new BeanPropertyRowMapper<>(CityWeatherDto.class), cityId, weatherTypeId);
-        jdbcTemplate.update("update CityWeather set cityId = ?, weatherTypeId = ?", cityId, weatherTypeId);
-        return cityWeathersDtos.get(0);
+    public int updateWeatherTypeId(CityWeatherDto cityWeatherDto) {
+        return jdbcTemplate.update("update CityWeather set weatherTypeId = ? where id=?", cityWeatherDto.getWeatherTypeId(), cityWeatherDto.getId());
     };
 
-    public CityWeatherDto deleteCityWeatherByCityName(String cityName) throws ResponseWeatherErrorException{
-        List<Long> cityId = jdbcTemplate.query("SELECT id FROM Cities WHERE name=?", new BeanPropertyRowMapper<>(Long.class), cityName);
-        if (!cityId.isEmpty()) {
-            List<CityWeatherDto> cityWeathers = jdbcTemplate.query("select * from CityWeather where cityId = ?", new BeanPropertyRowMapper<>(CityWeatherDto.class), cityId);
-            jdbcTemplate.update("delete from CityWeather where cityId = ?", cityId);
-            return cityWeathers.get(0);
+    public CityWeatherDto deleteCityWeatherByCityName(String cityName) throws WeatherException {
+        List<CityWeatherDto> cityWeatherDtos = jdbcTemplate.query("select CityWeather.id, CityWeather.cityId, CityWeather.weatherTypeId from CityWeather join Cities on CityWeather.cityId=Cities.id where Cities.name=?", new BeanPropertyRowMapper<>(CityWeatherDto.class), cityName);
+        if (!cityWeatherDtos.isEmpty()) {
+            // there can be zero or one id for the exact city name
+            CityWeatherDto cityWeatherDto = cityWeatherDtos.get(0);
+            jdbcTemplate.update("delete from CityWeather where cityId = ?", cityWeatherDto.getCityId());
+            return cityWeatherDto;
         } else {
-            throw new ResponseWeatherErrorException(ResponseEntity.status(404).header("No such object to delete.").build());
+            throw new WeatherNotFoundException("No such object to delete");
         }
     };
 }

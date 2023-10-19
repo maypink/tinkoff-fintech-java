@@ -14,4 +14,6 @@ public interface WeatherTypeRepository {
 
     List<WeatherTypeDto> getWeatherTypeByType(String weatherType);
 
+    List<WeatherTypeDto> getWeatherTypeById(Long weatherTypeId);
+
 }
