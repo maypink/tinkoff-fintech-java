@@ -15,11 +15,9 @@ public class CityService {
     private final CityRepository cityRepository;
 
     public void save(City city){
-        if (!cityRepository.existsById(city.getId())){
-            cityRepository.save(city);
-        } else {
+        if (cityRepository.existsById(city.getId())){
             throw new WeatherDuplicateException("Attempt to insert City with already existing id.");
-        }
+        } else cityRepository.save(city);
     }
 
 

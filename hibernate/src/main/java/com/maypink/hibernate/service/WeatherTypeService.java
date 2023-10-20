@@ -15,8 +15,8 @@ public class WeatherTypeService {
     private final WeatherTypeRepository weatherTypeRepository;
 
     public void save(WeatherType weatherType) throws WeatherException {
-        if (!weatherTypeRepository.existsById(weatherType.getId())){
-            weatherTypeRepository.save(weatherType);
-        } else throw new WeatherDuplicateException("Attempt to insert WeatherType with already existing id.");
+        if (weatherTypeRepository.existsById(weatherType.getId())){
+            throw new WeatherDuplicateException("Attempt to insert WeatherType with already existing id.");
+        } else weatherTypeRepository.save(weatherType);
     }
 }

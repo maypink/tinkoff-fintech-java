@@ -54,13 +54,13 @@ public class CityWeatherRepositoryImpl implements CityWeatherRepository {
 
     public CityWeatherDto deleteCityWeatherByCityName(String cityName) throws WeatherException {
         List<CityWeatherDto> cityWeatherDtos = jdbcTemplate.query("select CityWeather.id, CityWeather.cityId, CityWeather.weatherTypeId from CityWeather join Cities on CityWeather.cityId=Cities.id where Cities.name=?", new BeanPropertyRowMapper<>(CityWeatherDto.class), cityName);
-        if (!cityWeatherDtos.isEmpty()) {
+        if (cityWeatherDtos.isEmpty()) {
+            throw new WeatherNotFoundException("No such object to delete");
+        } else {
             // there can be zero or one id for the exact city name
             CityWeatherDto cityWeatherDto = cityWeatherDtos.get(0);
             jdbcTemplate.update("delete from CityWeather where cityId = ?", cityWeatherDto.getCityId());
             return cityWeatherDto;
-        } else {
-            throw new WeatherNotFoundException("No such object to delete");
         }
     };
 }

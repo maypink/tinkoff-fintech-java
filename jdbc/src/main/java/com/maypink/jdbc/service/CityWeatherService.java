@@ -32,7 +32,9 @@ public class CityWeatherService {
 
     @Transactional
     public CityWeatherDto save(CityWeather cityWeather) throws WeatherException {
-        if (!cityWeatherRepositoryImpl.exists(cityWeather)) {
+        if (cityWeatherRepositoryImpl.exists(cityWeather)) {
+            throw new WeatherDuplicateException("Attempt to insert CityWeather with already existing id.");
+        } else {
             cityService.save(cityWeather.getCity());
 
             weatherTypeService.save(cityWeather.getWeatherType());
@@ -40,8 +42,6 @@ public class CityWeatherService {
             cityWeatherRepositoryImpl.save(cityWeather);
 
             return cityWeatherMapper.toDto(cityWeather);
-        } else {
-            throw new WeatherDuplicateException("Attempt to insert CityWeather with already existing id.");
         }
     }
 
