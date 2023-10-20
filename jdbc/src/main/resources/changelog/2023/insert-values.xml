@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet id="Load data from CSV file to Cities table" author="maypink">
+        <loadData tableName="Cities" file="/changelog/2023/cities_data.csv">
+            <column name="id" header="id"/>
+            <column name="name" header="name"/>
+        </loadData>
+    </changeSet>
+
+    <changeSet id="Load data from CSV file to WeatherTypes" author="maypink">
+        <loadData tableName="WeatherTypes" file="/changelog/2023/weather_types_data.csv">
+            <column name="id" header="id"/>
+            <column name="type" header="type"/>
+        </loadData>
+    </changeSet>
+
+    <changeSet id="Load data from CSV file to CityWeather" author="maypink">
+        <loadData tableName="CityWeather" file="/changelog/2023/weather_for_cities_data.csv">
+            <column name="id" header="id"/>
+            <column name="CityId" header="city_id"/>
+            <column name="WeatherTypeId" header="weather_type_id"/>
+        </loadData>
+    </changeSet>
+</databaseChangeLog>

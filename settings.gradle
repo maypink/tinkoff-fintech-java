@@ -1,1 +1,4 @@
 rootProject.name = 'tinkoff'
+include 'jdbc'
+include 'hibernate'
+
