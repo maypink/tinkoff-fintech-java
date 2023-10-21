@@ -23,22 +23,11 @@ public class Weather {
     @Digits(integer = 3, fraction = 0)
     private Integer temperature;
 
-    @DateTimeFormat
-    private LocalDate date;
-
     // no date in constructor to simplify process of creating new Weather objects
     public Weather(String regionName, int temperature) {
         this.id = UUID.nameUUIDFromBytes(regionName.getBytes());
         this.regionName = regionName;
         this.temperature = temperature;
-        this.date = LocalDate.now();
-    }
-
-    public Weather(String regionName, int temperature, LocalDate date) {
-        this.id = UUID.nameUUIDFromBytes(regionName.getBytes());
-        this.regionName = regionName;
-        this.temperature = temperature;
-        this.date = date;
     }
 
 }

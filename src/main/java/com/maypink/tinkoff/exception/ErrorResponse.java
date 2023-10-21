@@ -11,7 +11,7 @@ public record ErrorResponse(
         String path
 ) {
 
-    public ErrorResponse(String message, Integer status, String error, String path) {
+    public ErrorResponse(Integer status, String error, String message, String path) {
         this(DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now()), status, error, message, path);
     }
 }

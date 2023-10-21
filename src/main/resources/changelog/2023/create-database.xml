@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet id="Create table Weather" author="maypink">
+        <createTable tableName="Weather">
+            <column name="id" type="long" autoIncrement="true">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_WEATHER"/>
+            </column>
+            <column name="name" type="varchar(30)" />
+            <column name="region" type="varchar(30)" />
+            <column name="country" type="varchar(30)" />
+            <column name="tempC" type="int"/>
+            <column name="tempF" type="double" />
+        </createTable>
+
+        <addAutoIncrement columnDataType="long"
+                          columnName="id"
+                          incrementBy="1"
+                          startWith="0"
+                          tableName="Weather"/>
+
+        <createIndex indexName="idx_simple_weather" tableName="Weather">
+            <column descending="true" name="id"/>
+        </createIndex>
+
+        <createIndex clustered="true"
+                     indexName="idx_complex_weather"
+                     tableName="Weather"
+                     unique="true">
+            <column descending="true" name="id"/>
+            <column descending="true" name="name"/>
+        </createIndex>
+
+    </changeSet>
+</databaseChangeLog>

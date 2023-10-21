@@ -1,62 +1,39 @@
 package com.maypink.tinkoff.repositories;
 
-import com.maypink.tinkoff.models.Weather;
+import com.maypink.tinkoff.controllers.resources.WeatherMapper;
+import com.maypink.tinkoff.controllers.resources.WeatherResource;
+import com.maypink.tinkoff.dto.WeatherDtoDB;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.function.Predicate;
 
 @Repository
 public class WeatherRepository {
-    private final List<Weather> weathers = createListWeather();
 
-    public List<Weather> getWeatherByRegionAndDate(String regionName, LocalDate date){
-        return weathers.stream()
-                .filter(r -> r.getRegionName().equals(regionName) && r.getDate().equals(date))
-                .toList();
+    @Autowired
+    WeatherMapper weatherMapper;
+    @Autowired
+    JdbcTemplate jdbcTemplate;
+
+    public List<WeatherResource> existsByName(String name){
+        List<WeatherDtoDB> weatherDtoDBs = jdbcTemplate.query("SELECT * FROM Weather WHERE name=?",
+                new BeanPropertyRowMapper<>(WeatherDtoDB.class), name);
+        return weatherDtoDBs.stream().map(weather -> weatherMapper.toResource(weather)).toList();
     }
 
-    public Weather addWeather(Weather weather){
-        weathers.add(weather);
-        return weather;
+    public List<WeatherResource> getAllWeathers(){
+        List<WeatherDtoDB> weatherDtoDBs = jdbcTemplate.query("SELECT * FROM Weather", new BeanPropertyRowMapper<>(WeatherDtoDB.class));
+        return weatherDtoDBs.stream().map(weather -> weatherMapper.toResource(weather)).toList();
     }
 
-    public Weather updateWeatherWithTemperature(Weather weatherToUpdate, Integer temperature){
-        weatherToUpdate.setTemperature(temperature);
-        return weatherToUpdate;
-    }
-
-    public Optional<List<Weather>> deleteWeather(String regionName){
-        Predicate<Weather> filter = r -> r.getRegionName().equals(regionName);
-        List<Weather> weatherForDelete = weathers
-                .stream()
-                .filter(filter)
-                .toList();
-        if (weatherForDelete.isEmpty()){
-            return Optional.empty();
-        }
-        weathers.removeIf(filter);
-        return Optional.of(weatherForDelete);
-    }
-
-    private static List<Weather> createListWeather(){
-        Weather moscowWeather = new Weather("Moscow", -40);
-        Weather surgutWeather = new Weather("Surgut", -10);
-        Weather saintPeterburgWeather = new Weather("SP", 15);
-        Weather berlinWeather = new Weather("Berlin", 20);
-        Weather darmstadtWeather = new Weather("Darmstadt", 17);
-        Weather munichWeather = new Weather("Munich", 15);
-
-        List<Weather> regions = new ArrayList<>();
-        regions.add(moscowWeather);
-        regions.add(surgutWeather);
-        regions.add(saintPeterburgWeather);
-        regions.add(berlinWeather);
-        regions.add(darmstadtWeather);
-        regions.add(munichWeather);
-        return regions;
+    public WeatherResource addWeather(WeatherResource weatherResource){
+        jdbcTemplate.update("INSERT INTO Weather (name, region, country, tempC, tempF) " +
+                        "VALUES(?, ?, ?, ?, ?)",
+                weatherResource.name(), weatherResource.region(), weatherResource.country(),
+                weatherResource.tempC(), weatherResource.tempF());
+        return weatherResource;
     }
 }

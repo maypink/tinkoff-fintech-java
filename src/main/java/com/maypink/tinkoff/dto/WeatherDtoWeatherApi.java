@@ -1,6 +1,6 @@
 package com.maypink.tinkoff.dto;
 
-public record WeatherDto(
+public record WeatherDtoWeatherApi(
         LocationDto location,
         CurrentDto current
 ) {

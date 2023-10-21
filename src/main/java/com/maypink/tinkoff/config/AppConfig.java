@@ -4,6 +4,8 @@ import com.maypink.tinkoff.exception.WeatherExceptionHandler;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
 import lombok.RequiredArgsConstructor;
+import org.h2.jdbcx.JdbcDataSource;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,6 +31,7 @@ public class AppConfig {
                 .build();
         WeatherExceptionHandler weatherExceptionHandler = new WeatherExceptionHandler(restTemplate.getMessageConverters());
         restTemplate.setErrorHandler(weatherExceptionHandler);
+
         return restTemplate;
     }
 }
