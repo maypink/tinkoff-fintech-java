@@ -26,6 +26,7 @@ import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 import java.util.List;
 
+import static java.sql.Connection.TRANSACTION_READ_COMMITTED;
 import static java.sql.Connection.TRANSACTION_SERIALIZABLE;
 
 
@@ -72,8 +73,8 @@ public class WeatherController {
         } else {
             Connection connection = weatherDataSource.getJdbcDataSource().getConnection();
             DatabaseMetaData dbmd = connection.getMetaData();
-            if (dbmd.supportsTransactionIsolationLevel(TRANSACTION_SERIALIZABLE)) {
-                connection.setTransactionIsolation(TRANSACTION_SERIALIZABLE);
+            if (dbmd.supportsTransactionIsolationLevel(TRANSACTION_READ_COMMITTED)) {
+                connection.setTransactionIsolation(TRANSACTION_READ_COMMITTED);
             }
             try (connection) {
                 connection.setAutoCommit(false);
@@ -89,6 +90,8 @@ public class WeatherController {
         }
     }
 
+    // since it is read and add only app, so there is no such need to double check rows after the first read (it can not be modified)
+    // on the other hand, we want to get commited only information
     @Transactional(isolation = Isolation.READ_COMMITTED)
     @Operation(
             summary = "Add weather from Weather Service"
