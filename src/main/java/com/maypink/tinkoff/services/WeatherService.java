@@ -1,17 +1,18 @@
 package com.maypink.tinkoff.services;
 
-import com.maypink.tinkoff.dto.WeatherDto;
-import com.maypink.tinkoff.models.Weather;
+import com.maypink.tinkoff.controllers.resources.WeatherResource;
+import com.maypink.tinkoff.dto.WeatherApiResponse;
 
-import java.time.LocalDate;
+import java.sql.SQLException;
 import java.util.List;
-import java.util.Optional;
 
 
 public interface WeatherService {
-    List<Weather> getWeatherByRegionNameAndDate(String regionName, LocalDate date);
-    Weather add(Weather weather);
-    Weather update(Weather weather);
-    Optional<List<Weather>> deleteByRegionName(String regionName);
-    WeatherDto getWeather(String key);
+
+    List<WeatherResource> getAllWeathers();
+    List<WeatherResource> getWeatherByName(String regionName);
+    WeatherResource addJdbc(WeatherResource weather) throws SQLException;
+
+    WeatherResource addSpring(WeatherResource weather) throws SQLException;
+    WeatherApiResponse getWeather(String key);
 }

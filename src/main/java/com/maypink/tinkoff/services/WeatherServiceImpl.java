@@ -1,59 +1,89 @@
 package com.maypink.tinkoff.services;
 
 import com.maypink.tinkoff.client.WeatherClient;
-import com.maypink.tinkoff.dto.WeatherDto;
-import com.maypink.tinkoff.models.Weather;
+import com.maypink.tinkoff.config.WeatherDataSource;
+import com.maypink.tinkoff.controllers.resources.WeatherResource;
+import com.maypink.tinkoff.dto.WeatherApiResponse;
+import com.maypink.tinkoff.exception.customException.WeatherDuplicateException;
+import com.maypink.tinkoff.exception.customException.WeatherException;
+import com.maypink.tinkoff.exception.customException.WeatherTransactionException;
 import com.maypink.tinkoff.repositories.WeatherRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.SQLException;
 import java.util.List;
-import java.util.Optional;
+
+import static java.sql.Connection.TRANSACTION_READ_COMMITTED;
 
 
 @Service
 public class WeatherServiceImpl implements WeatherService{
+    @Autowired
     private final WeatherRepository weatherRepository;
 
+    @Autowired
     private final WeatherClient weatherClient;
 
-    public WeatherServiceImpl(WeatherRepository weatherRepository, WeatherClient weatherClient){
+    @Autowired
+    private final WeatherDataSource weatherDataSource;
+
+    public WeatherServiceImpl(WeatherRepository weatherRepository, WeatherClient weatherClient, WeatherDataSource weatherDataSource){
         this.weatherRepository = weatherRepository;
         this.weatherClient = weatherClient;
-    }
-
-
-    public List<Weather> getWeatherByRegionNameAndDate(String regionName, LocalDate date) {
-        return weatherRepository.getWeatherByRegionAndDate(regionName, date);
+        this.weatherDataSource = weatherDataSource;
     }
 
     @Override
-    public Weather add(Weather weather) {
-        return weatherRepository.addWeather(weather);
+    public List<WeatherResource> getAllWeathers(){
+        return weatherRepository.getAllWeathers();
+    }
+
+
+    @Override
+    public List<WeatherResource> getWeatherByName(String regionName) throws WeatherException {
+        return weatherRepository.existsByName(regionName);
     }
 
     @Override
-    public Weather update(Weather weather) {
-        List<Weather> filteredWeathers = weatherRepository.getWeatherByRegionAndDate(weather.getRegionName(), weather.getDate());
+    public WeatherResource addJdbc(WeatherResource weatherResource) throws WeatherException, SQLException {
+        List<WeatherResource> weathers = getWeatherByName(weatherResource.name());
+        if (weathers.isEmpty()) {
+            Connection connection = weatherDataSource.getConnection();
+            DatabaseMetaData dbmd = connection.getMetaData();
+            if (dbmd.supportsTransactionIsolationLevel(TRANSACTION_READ_COMMITTED)) {
+                connection.setTransactionIsolation(TRANSACTION_READ_COMMITTED);
+            }
+            try (connection) {
+                connection.setAutoCommit(false);
+                weatherRepository.addWeather(weatherResource);
+                connection.commit();
+                return weatherResource;
 
-        // if there is no such Weather object
-        if (filteredWeathers.isEmpty()) {
-            return weatherRepository.addWeather(weather);
+            } catch (SQLException e) {
+                connection.rollback();
+                throw new WeatherTransactionException("Transaction was not successful.");
+            }
         } else {
-            // there must be only zero or one weather with specified date and region, since adding new object with the same data
-            // is impossible
-            Weather weatherToUpdate = filteredWeathers.get(0);
-            return weatherRepository.updateWeatherWithTemperature(weatherToUpdate, weather.getTemperature());
+            throw new WeatherDuplicateException("Attempt to insert duplicate of Weather.");
         }
     }
 
     @Override
-    public Optional<List<Weather>> deleteByRegionName(String regionName) {
-        return weatherRepository.deleteWeather(regionName);
+    public WeatherResource addSpring(WeatherResource weatherResource) throws WeatherException {
+        List<WeatherResource> weathers = getWeatherByName(weatherResource.name());
+        if (weathers.isEmpty()) {
+            weatherRepository.addWeather(weatherResource);
+            return weatherResource;
+        } else {
+            throw new WeatherDuplicateException("Attempt to insert duplicate of Weather.");
+        }
     }
 
     @Override
-    public WeatherDto getWeather(String key){
+    public WeatherApiResponse getWeather(String key){
         return weatherClient.getWeather(key);
     }
 }
