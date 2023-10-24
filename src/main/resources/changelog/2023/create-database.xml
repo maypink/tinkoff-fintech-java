@@ -23,15 +23,15 @@
                           tableName="Weather"/>
 
         <createIndex indexName="idx_simple_weather" tableName="Weather">
-            <column descending="true" name="id"/>
+            <column descending="true" name="name"/>
         </createIndex>
 
         <createIndex clustered="true"
                      indexName="idx_complex_weather"
                      tableName="Weather"
                      unique="true">
-            <column descending="true" name="id"/>
             <column descending="true" name="name"/>
+            <column descending="true" name="tempC"/>
         </createIndex>
 
     </changeSet>

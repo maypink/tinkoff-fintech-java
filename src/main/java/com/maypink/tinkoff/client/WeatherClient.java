@@ -1,7 +1,7 @@
 package com.maypink.tinkoff.client;
 
 import com.maypink.tinkoff.config.WeatherConfigProperties;
-import com.maypink.tinkoff.dto.WeatherDtoWeatherApi;
+import com.maypink.tinkoff.dto.WeatherApiResponse;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -18,9 +18,9 @@ public class WeatherClient {
         this.weatherConfigProperties = weatherConfigProperties;
     }
 
-    public WeatherDtoWeatherApi getWeather(String query) {
+    public WeatherApiResponse getWeather(String query) {
         return restTemplate.getForObject(weatherConfigProperties.getEndpoint() + "?q=" +
-                query + "&key=" + weatherConfigProperties.getApiKey(), WeatherDtoWeatherApi.class);
+                query + "&key=" + weatherConfigProperties.getApiKey(), WeatherApiResponse.class);
     }
 
 

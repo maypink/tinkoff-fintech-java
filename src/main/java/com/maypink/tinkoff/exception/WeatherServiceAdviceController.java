@@ -3,6 +3,7 @@ package com.maypink.tinkoff.exception;
 import com.maypink.tinkoff.exception.customException.WeatherDuplicateException;
 import com.maypink.tinkoff.exception.customException.WeatherException;
 import com.maypink.tinkoff.exception.customException.WeatherNotFoundException;
+import com.maypink.tinkoff.exception.customException.WeatherTransactionException;
 import io.github.resilience4j.ratelimiter.RequestNotPermitted;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
@@ -33,6 +34,12 @@ public class WeatherServiceAdviceController {
     public ResponseEntity<ErrorResponse> getErrorResponseForWeatherApi(WeatherDuplicateException ex, HttpServletRequest request) {
         return handleException(ex, request, HttpStatus.CONFLICT);
     }
+
+    @ExceptionHandler(value = WeatherTransactionException.class)
+    public ResponseEntity<ErrorResponse> getErrorResponseForWeatherApi(WeatherTransactionException ex, HttpServletRequest request) {
+        return handleException(ex, request, HttpStatus.BAD_REQUEST);
+    }
+
 
     private ResponseEntity<ErrorResponse> handleException(WeatherException ex, HttpServletRequest request, HttpStatusCode httpStatusCode){
         String message = ex.getMessage();

@@ -1,7 +1,5 @@
 package com.maypink.tinkoff.controllers;
 
-
-import com.maypink.tinkoff.config.WeatherDataSource;
 import com.maypink.tinkoff.controllers.resources.WeatherMapper;
 import com.maypink.tinkoff.controllers.resources.WeatherResource;
 import com.maypink.tinkoff.exception.ResponseWeatherErrorException;
@@ -21,13 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 import java.util.List;
-
-import static java.sql.Connection.TRANSACTION_READ_COMMITTED;
-import static java.sql.Connection.TRANSACTION_SERIALIZABLE;
 
 
 @RestController
@@ -36,8 +29,6 @@ import static java.sql.Connection.TRANSACTION_SERIALIZABLE;
 public class WeatherController {
     private final WeatherServiceImpl weatherService;
     private final WeatherMapper weatherMapper;
-
-    private final WeatherDataSource weatherDataSource;
 
     @Operation(
             summary = "Get weather from H2 database."
@@ -71,22 +62,9 @@ public class WeatherController {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Validation error");
         } else {
-            Connection connection = weatherDataSource.getJdbcDataSource().getConnection();
-            DatabaseMetaData dbmd = connection.getMetaData();
-            if (dbmd.supportsTransactionIsolationLevel(TRANSACTION_READ_COMMITTED)) {
-                connection.setTransactionIsolation(TRANSACTION_READ_COMMITTED);
-            }
-            try (connection) {
-                connection.setAutoCommit(false);
-                WeatherResource weatherResource = weatherMapper.toResource(weatherService.getWeather(query));
-                weatherService.add(weatherResource);
-                connection.commit();
-                return ResponseEntity.status(HttpStatus.CREATED).body(weatherResource);
-
-            } catch (SQLException e) {
-                connection.rollback();
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Something went wrong.");
-            }
+            WeatherResource weatherResource = weatherMapper.toResource(weatherService.getWeather(query));
+            weatherService.addJdbc(weatherResource);
+            return ResponseEntity.status(HttpStatus.CREATED).body(weatherResource);
         }
     }
 
@@ -103,7 +81,7 @@ public class WeatherController {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Validation error");
         } else {
             WeatherResource weatherResource = weatherMapper.toResource(weatherService.getWeather(query));
-            weatherService.add(weatherResource);
+            weatherService.addSpring(weatherResource);
             return ResponseEntity.status(HttpStatus.CREATED).body(weatherResource);
         }
     }

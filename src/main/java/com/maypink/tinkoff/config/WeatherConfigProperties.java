@@ -26,5 +26,4 @@ public class WeatherConfigProperties {
 
     @Value("${spring.datasource.password}")
     private String password;
-
 }
