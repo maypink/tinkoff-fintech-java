@@ -68,12 +68,12 @@ public class WeatherController {
         }
     }
 
-//    @Operation(
-//            summary = "Get weather from Weather Service"
-//    )
-//    @GetMapping
-//    @RateLimiter(name = "rateLimiterApi")
-//    public ResponseEntity<?> getWeather(@RequestParam String query) throws ResponseWeatherErrorException {
-//        return ResponseEntity.ok(weatherMapper.toResource(weatherService.getWeather(query)));
-//    }
+    @Operation(
+            summary = "Get weather from Weather Service"
+    )
+    @GetMapping
+    @RateLimiter(name = "rateLimiterApi")
+    public ResponseEntity<?> getWeather(@RequestParam String query) throws ResponseWeatherErrorException {
+        return ResponseEntity.ok(weatherMapper.toResource(weatherService.getWeather(query)));
+    }
 }
