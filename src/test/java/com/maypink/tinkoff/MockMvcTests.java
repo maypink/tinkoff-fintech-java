@@ -1,0 +1,87 @@
+package com.maypink.tinkoff;
+
+import com.maypink.tinkoff.controllers.resources.WeatherResource;
+import com.maypink.tinkoff.dto.CurrentDto;
+import com.maypink.tinkoff.dto.LocationDto;
+import com.maypink.tinkoff.dto.WeatherApiResponse;
+import com.maypink.tinkoff.services.WeatherServiceImpl;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.List;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+@SpringBootTest
+@AutoConfigureMockMvc
+public class MockMvcTests {
+
+    @MockBean
+    WeatherServiceImpl weatherServiceImpl;
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @Test
+    public void testGet() throws Exception {
+        String weatherName = "name";
+        WeatherResource weatherResource = getWeatherWithName(weatherName);
+        Mockito.when(weatherServiceImpl.getWeatherByName(weatherName)).thenReturn(List.of(weatherResource));
+
+        mockMvc.perform(get("/weather/" + weatherName))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value(weatherResource.name()))
+                .andExpect(jsonPath("$.region").value(weatherResource.region()))
+                .andExpect(jsonPath("$.country").value(weatherResource.country()))
+                .andExpect(jsonPath("$.tempC").value(weatherResource.tempC()))
+                .andExpect(jsonPath("$.tempF").value(weatherResource.tempF()));
+    }
+
+    @Test
+    public void testGetAllWeathers() throws Exception {
+        Mockito.when(weatherServiceImpl.getAllWeathers()).thenReturn(getWeatherResources());
+
+        mockMvc.perform(get("/weather/all"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(2));
+    }
+
+    @Test
+    public void testAdd() throws Exception {
+        String weatherName = "Tokyo";
+        WeatherResource weatherResource = getWeatherWithName(weatherName);
+        WeatherApiResponse weatherApiResponse = new WeatherApiResponse(new LocationDto(weatherName), new CurrentDto());
+        Mockito.when(weatherServiceImpl.getWeather(weatherName)).thenReturn(weatherApiResponse);
+        Mockito.when(weatherServiceImpl.add(weatherResource)).thenReturn(weatherResource);
+
+        mockMvc.perform(post("/weather/new")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(weatherName)
+                        .characterEncoding("utf-8"))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.name").value(weatherResource.name()))
+                .andExpect(jsonPath("$.region").value(weatherResource.region()))
+                .andExpect(jsonPath("$.country").value(weatherResource.country()))
+                .andExpect(jsonPath("$.tempC").value(weatherResource.tempC()))
+                .andExpect(jsonPath("$.tempF").value(weatherResource.tempF()));
+    }
+
+    private List<WeatherResource> getWeatherResources(){
+        WeatherResource weatherResource1 = getWeatherWithName("name");
+        WeatherResource weatherResource2 = getWeatherWithName("name2");
+        return List.of(weatherResource1, weatherResource2);
+    }
+
+    private WeatherResource getWeatherWithName(String name){
+        return new WeatherResource(name, "region", "country", 0, 0D);
+    }
+}

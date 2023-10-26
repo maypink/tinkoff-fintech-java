@@ -1,6 +1,8 @@
 package com.maypink.tinkoff.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 public record CurrentDto(
         @JsonProperty("last_updated_epoch")
@@ -46,4 +48,9 @@ public record CurrentDto(
         @JsonProperty("gust_kph")
         Integer gustKph
 ) {
+        public CurrentDto(){
+                this(0, "lastUpdated", 0, 0D, 0,
+                        new ConditionDto("text", "icon", 0),
+                        0D, 0D, 0, "windDir", 0, 0D, 0, 0, 0, 0, 0, 0D, 0, 0, 0, 0D, 0);
+        }
 }

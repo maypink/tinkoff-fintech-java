@@ -19,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.SQLException;
 import java.util.List;
 
 
@@ -53,45 +52,28 @@ public class WeatherController {
         return ResponseEntity.status(HttpStatus.OK).body(weatherResources);
     }
 
-    @Operation(
-            summary = "Add weather from Weather Service"
-    )
-    @PostMapping("/newJdbc")
-    public ResponseEntity<?> addWithJdbcTransaction(@RequestBody @Valid String query, BindingResult bindingResult) throws ResponseWeatherErrorException, SQLException {
-
-        if (bindingResult.hasErrors()) {
-            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Validation error");
-        } else {
-            WeatherResource weatherResource = weatherMapper.toResource(weatherService.getWeather(query));
-            weatherService.addJdbc(weatherResource);
-            return ResponseEntity.status(HttpStatus.CREATED).body(weatherResource);
-        }
-    }
-
-    // since it is read and add only app, so there is no such need to double check rows after the first read (it can not be modified)
-    // on the other hand, we want to get commited only information
     @Transactional(isolation = Isolation.READ_COMMITTED)
     @Operation(
             summary = "Add weather from Weather Service"
     )
-    @PostMapping("/newSpring")
-    public ResponseEntity<?> addWithSpringTransaction(@RequestBody @Valid String query, BindingResult bindingResult) throws ResponseWeatherErrorException {
+    @PostMapping("/new")
+    public ResponseEntity<?> add(@RequestBody @Valid String query, BindingResult bindingResult) throws ResponseWeatherErrorException {
 
         if (bindingResult.hasErrors()) {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Validation error");
         } else {
             WeatherResource weatherResource = weatherMapper.toResource(weatherService.getWeather(query));
-            weatherService.addSpring(weatherResource);
+            weatherService.add(weatherResource);
             return ResponseEntity.status(HttpStatus.CREATED).body(weatherResource);
         }
     }
 
-    @Operation(
-            summary = "Get weather from Weather Service"
-    )
-    @GetMapping
-    @RateLimiter(name = "rateLimiterApi")
-    public ResponseEntity<?> getWeather(@RequestParam String query) throws ResponseWeatherErrorException {
-        return ResponseEntity.ok(weatherMapper.toResource(weatherService.getWeather(query)));
-    }
+//    @Operation(
+//            summary = "Get weather from Weather Service"
+//    )
+//    @GetMapping
+//    @RateLimiter(name = "rateLimiterApi")
+//    public ResponseEntity<?> getWeather(@RequestParam String query) throws ResponseWeatherErrorException {
+//        return ResponseEntity.ok(weatherMapper.toResource(weatherService.getWeather(query)));
+//    }
 }
