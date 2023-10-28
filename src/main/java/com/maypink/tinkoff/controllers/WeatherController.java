@@ -30,7 +30,7 @@ public class WeatherController {
     private final WeatherMapper weatherMapper;
 
     @Operation(
-            summary = "Get weather from H2 database."
+            summary = "Get weather from database."
     )
     @GetMapping("/{name}")
     public ResponseEntity<?> get(@PathVariable @Parameter(description = "name") @NotEmpty @Size(max = 15) String name) {
@@ -44,7 +44,7 @@ public class WeatherController {
     }
 
     @Operation(
-            summary = "Get all weathers from H2 database."
+            summary = "Get all weathers from database."
     )
     @GetMapping("/all")
     public ResponseEntity<?> getAllWeathers() {

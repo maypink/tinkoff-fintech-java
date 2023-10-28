@@ -6,21 +6,21 @@
 
     <changeSet id="Create table Weather" author="maypink">
         <createTable tableName="Weather">
-            <column name="id" type="long" autoIncrement="true">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_WEATHER"/>
+            <column name="id" type="serial">
+                <constraints nullable="false" primaryKey="true"/>
             </column>
-            <column name="name" type="varchar(30)" />
-            <column name="region" type="varchar(30)" />
-            <column name="country" type="varchar(30)" />
+            <column name="name" type="varchar" />
+            <column name="region" type="varchar" />
+            <column name="country" type="varchar" />
             <column name="tempC" type="int"/>
-            <column name="tempF" type="double" />
+            <column name="tempF" type="int" />
         </createTable>
 
-        <addAutoIncrement columnDataType="long"
-                          columnName="id"
-                          incrementBy="1"
-                          startWith="0"
-                          tableName="Weather"/>
+<!--        <addAutoIncrement columnDataType="uuid"-->
+<!--                          columnName="id"-->
+<!--                          incrementBy="1"-->
+<!--                          startWith="0"-->
+<!--                          tableName="Weather"/>-->
 
         <createIndex indexName="idx_simple_weather" tableName="Weather">
             <column descending="true" name="name"/>

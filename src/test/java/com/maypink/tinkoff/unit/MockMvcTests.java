@@ -1,21 +1,27 @@
-package com.maypink.tinkoff;
+package com.maypink.tinkoff.unit;
 
+import com.maypink.tinkoff.controllers.WeatherController;
 import com.maypink.tinkoff.controllers.resources.WeatherResource;
 import com.maypink.tinkoff.dto.CurrentDto;
 import com.maypink.tinkoff.dto.LocationDto;
 import com.maypink.tinkoff.dto.WeatherApiResponse;
 import com.maypink.tinkoff.services.WeatherServiceImpl;
+import com.maypink.tinkoff.exception.customException.WeatherNotFoundException;
+
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 
+import static org.junit.Assert.assertThrows;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -27,6 +33,9 @@ public class MockMvcTests {
 
     @MockBean
     WeatherServiceImpl weatherServiceImpl;
+
+    @SpyBean
+    WeatherController weatherController;
 
     @Autowired
     private MockMvc mockMvc;
@@ -46,8 +55,19 @@ public class MockMvcTests {
                 .andExpect(jsonPath("$.tempF").value(weatherResource.tempF()));
     }
 
+    // to practice spy and stub
+    @Test
+    public void testGetWithSpy() {
+        String weatherName = "name";
+        // kind of stub since there is no possibility to implement full stub class
+        doThrow(new WeatherNotFoundException("Weather with specified name not found")).when(weatherServiceImpl).getWeather(weatherName);
+
+        assertThrows(WeatherNotFoundException.class, ()->{weatherController.get(weatherName);} );
+    }
+
     @Test
     public void testGetAllWeathers() throws Exception {
+
         Mockito.when(weatherServiceImpl.getAllWeathers()).thenReturn(getWeatherResources());
 
         mockMvc.perform(get("/weather/all"))
@@ -56,7 +76,7 @@ public class MockMvcTests {
     }
 
     @Test
-    public void testAdd() throws Exception {
+    public void testAdd200() throws Exception {
         String weatherName = "Tokyo";
         WeatherResource weatherResource = getWeatherWithName(weatherName);
         WeatherApiResponse weatherApiResponse = new WeatherApiResponse(new LocationDto(weatherName), new CurrentDto());
