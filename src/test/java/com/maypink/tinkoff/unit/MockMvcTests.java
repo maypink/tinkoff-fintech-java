@@ -42,7 +42,7 @@ public class MockMvcTests {
     private MockMvc mockMvc;
 
     @Test
-    public void getReturn200() throws Exception {
+    public void getReturns200() throws Exception {
         String weatherName = "name";
         WeatherResource weatherResource = getWeatherWithName(weatherName);
         Mockito.when(weatherServiceImpl.getWeatherByName(weatherName)).thenReturn(List.of(weatherResource));
@@ -67,7 +67,7 @@ public class MockMvcTests {
     }
 
     @Test
-    public void getAllWeathers200() throws Exception {
+    public void getAllWeathersReturns200() throws Exception {
 
         Mockito.when(weatherServiceImpl.getAllWeathers()).thenReturn(getWeatherResources());
 
@@ -77,7 +77,7 @@ public class MockMvcTests {
     }
 
     @Test
-    public void add201() throws Exception {
+    public void addReturns201() throws Exception {
         String weatherName = "Tokyo";
         WeatherResource weatherResource = getWeatherWithName(weatherName);
         WeatherApiResponse weatherApiResponse = new WeatherApiResponse(new LocationDto(weatherName), new CurrentDto());

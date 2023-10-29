@@ -28,7 +28,7 @@ public class WeatherApiIntegrationTests {
     private MockMvc mvc;
 
     @Test
-    public void getWeatherFromApi200() throws Exception {
+    public void getWeatherFromApiReturns200() throws Exception {
 
         String weatherName = "Tokyo";
         String region = "Tokyo";
@@ -42,7 +42,7 @@ public class WeatherApiIntegrationTests {
     }
 
     @Test
-    public void getWeatherFromApi400() throws Exception {
+    public void getWeatherFromApiReturns400() throws Exception {
 
         String weatherName = "NonExistentName";
         mvc.perform(get("/weather").queryParam("query", weatherName))
@@ -51,7 +51,7 @@ public class WeatherApiIntegrationTests {
     }
 
     @Test
-    public void getWeatherFromApiNoApiKey403() throws Exception {
+    public void getWeatherFromApiNoApiKeyReturns403() throws Exception {
 
         // kind of stub
         Mockito.when(weatherConfigProperties.getApiKey()).thenReturn("NoApiKey");

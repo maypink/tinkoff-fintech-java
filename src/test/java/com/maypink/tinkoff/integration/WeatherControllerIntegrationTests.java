@@ -20,7 +20,7 @@ public class WeatherControllerIntegrationTests extends SpringBootApplicationTest
     ObjectMapper objectMapper;
 
     @Test
-    void add201() throws Exception {
+    void addReturns201() throws Exception {
         String weatherName = "Milan";
 
         mockMvc.perform(post("/weather/new").contentType(MediaType.APPLICATION_JSON)
@@ -29,9 +29,19 @@ public class WeatherControllerIntegrationTests extends SpringBootApplicationTest
                 .andExpect(status().isCreated());
     }
 
+    @Test
+    void addReturns400() throws Exception {
+        String weatherName = "NonExistentName";
+
+        mockMvc.perform(post("/weather/new").contentType(MediaType.APPLICATION_JSON)
+                        .content(weatherName)
+                        .characterEncoding("utf-8"))
+                .andExpect(status().isBadRequest());
+    }
+
     // insert TestCity in schema to make this test independent of 'testAddMethod'
     @Test
-    void get200() throws Exception {
+    void getReturns200() throws Exception {
         String weatherName = "TestCity";
 
         mockMvc.perform(get("/weather/" + weatherName))
@@ -40,7 +50,7 @@ public class WeatherControllerIntegrationTests extends SpringBootApplicationTest
     }
 
     @Test
-    void get404() throws Exception {
+    void getReturns404() throws Exception {
         String weatherName = "NonExistentCity";
 
         mockMvc.perform(get("/weather/" + weatherName))
@@ -48,7 +58,7 @@ public class WeatherControllerIntegrationTests extends SpringBootApplicationTest
     }
 
     @Test
-    void getAllWeathersMethod200() throws Exception {
+    void getAllWeathersMethodReturns200() throws Exception {
 
         mockMvc.perform(get("/weather/all"))
                 .andExpect(status().isOk())
