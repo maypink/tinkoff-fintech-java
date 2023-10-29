@@ -20,7 +20,7 @@ public class WeatherControllerIntegrationTests extends SpringBootApplicationTest
     ObjectMapper objectMapper;
 
     @Test
-    void testAddMethod() throws Exception {
+    void add201() throws Exception {
         String weatherName = "Milan";
 
         mockMvc.perform(post("/weather/new").contentType(MediaType.APPLICATION_JSON)
@@ -31,7 +31,7 @@ public class WeatherControllerIntegrationTests extends SpringBootApplicationTest
 
     // insert TestCity in schema to make this test independent of 'testAddMethod'
     @Test
-    void testGet200Method() throws Exception {
+    void get200() throws Exception {
         String weatherName = "TestCity";
 
         mockMvc.perform(get("/weather/" + weatherName))
@@ -40,7 +40,7 @@ public class WeatherControllerIntegrationTests extends SpringBootApplicationTest
     }
 
     @Test
-    void testGet404Method() throws Exception {
+    void get404() throws Exception {
         String weatherName = "NonExistentCity";
 
         mockMvc.perform(get("/weather/" + weatherName))
@@ -48,7 +48,7 @@ public class WeatherControllerIntegrationTests extends SpringBootApplicationTest
     }
 
     @Test
-    void testGetAllWeathersMethod() throws Exception {
+    void getAllWeathersMethod200() throws Exception {
 
         mockMvc.perform(get("/weather/all"))
                 .andExpect(status().isOk())

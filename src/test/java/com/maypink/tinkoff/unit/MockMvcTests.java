@@ -5,6 +5,7 @@ import com.maypink.tinkoff.controllers.resources.WeatherResource;
 import com.maypink.tinkoff.dto.CurrentDto;
 import com.maypink.tinkoff.dto.LocationDto;
 import com.maypink.tinkoff.dto.WeatherApiResponse;
+import com.maypink.tinkoff.exception.customException.WeatherDuplicateException;
 import com.maypink.tinkoff.services.WeatherServiceImpl;
 import com.maypink.tinkoff.exception.customException.WeatherNotFoundException;
 
@@ -41,7 +42,7 @@ public class MockMvcTests {
     private MockMvc mockMvc;
 
     @Test
-    public void testGet() throws Exception {
+    public void getReturn200() throws Exception {
         String weatherName = "name";
         WeatherResource weatherResource = getWeatherWithName(weatherName);
         Mockito.when(weatherServiceImpl.getWeatherByName(weatherName)).thenReturn(List.of(weatherResource));
@@ -57,7 +58,7 @@ public class MockMvcTests {
 
     // to practice spy and stub
     @Test
-    public void testGetWithSpy() {
+    public void getThrowsWeatherNotFoundException() {
         String weatherName = "name";
         // kind of stub since there is no possibility to implement full stub class
         doThrow(new WeatherNotFoundException("Weather with specified name not found")).when(weatherServiceImpl).getWeather(weatherName);
@@ -66,7 +67,7 @@ public class MockMvcTests {
     }
 
     @Test
-    public void testGetAllWeathers() throws Exception {
+    public void getAllWeathers200() throws Exception {
 
         Mockito.when(weatherServiceImpl.getAllWeathers()).thenReturn(getWeatherResources());
 
@@ -76,7 +77,7 @@ public class MockMvcTests {
     }
 
     @Test
-    public void testAdd200() throws Exception {
+    public void add201() throws Exception {
         String weatherName = "Tokyo";
         WeatherResource weatherResource = getWeatherWithName(weatherName);
         WeatherApiResponse weatherApiResponse = new WeatherApiResponse(new LocationDto(weatherName), new CurrentDto());
@@ -93,6 +94,22 @@ public class MockMvcTests {
                 .andExpect(jsonPath("$.country").value(weatherResource.country()))
                 .andExpect(jsonPath("$.tempC").value(weatherResource.tempC()))
                 .andExpect(jsonPath("$.tempF").value(weatherResource.tempF()));
+    }
+
+    @Test
+    public void addThrowsWeatherDuplicateException() throws Exception {
+        String weatherName = "NonExistentName";
+        WeatherResource weatherResource = getWeatherWithName(weatherName);
+        WeatherApiResponse weatherApiResponse = new WeatherApiResponse(new LocationDto(weatherName), new CurrentDto());
+        Mockito.when(weatherServiceImpl.getWeather(weatherName)).thenReturn(weatherApiResponse);
+        Mockito.when(weatherServiceImpl.add(weatherResource)).thenThrow(new WeatherDuplicateException("Attempt to insert duplicate of Weather."));
+
+        mockMvc.perform(post("/weather/new")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(weatherName)
+                        .characterEncoding("utf-8"))
+                        .andExpect(jsonPath("$.status").value(409))
+                        .andExpect(jsonPath("$.error").value("Attempt to insert duplicate of Weather."));
     }
 
     private List<WeatherResource> getWeatherResources(){
