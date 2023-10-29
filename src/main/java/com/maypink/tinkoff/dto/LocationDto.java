@@ -14,4 +14,7 @@ public record LocationDto(
         Integer localtimeEpoch,
         String localtime
 ) {
+        public LocationDto(String name){
+                this(name, "region", "country", 0D, 0D, "tzId", 0, "localTime");
+        }
 }

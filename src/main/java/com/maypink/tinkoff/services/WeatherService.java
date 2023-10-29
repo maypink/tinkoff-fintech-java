@@ -11,8 +11,6 @@ public interface WeatherService {
 
     List<WeatherResource> getAllWeathers();
     List<WeatherResource> getWeatherByName(String regionName);
-    WeatherResource addJdbc(WeatherResource weather) throws SQLException;
-
-    WeatherResource addSpring(WeatherResource weather) throws SQLException;
+    WeatherResource add(WeatherResource weather) throws SQLException;
     WeatherApiResponse getWeather(String key);
 }
