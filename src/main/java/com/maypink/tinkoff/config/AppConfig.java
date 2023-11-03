@@ -10,6 +10,7 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 
 
 @OpenAPIDefinition(
@@ -33,5 +34,12 @@ public class AppConfig {
         restTemplate.setErrorHandler(weatherExceptionHandler);
 
         return restTemplate;
+    }
+
+    public void addViewControllers(ViewControllerRegistry registry) {
+        registry.addViewController("/home").setViewName("home");
+        registry.addViewController("/").setViewName("home");
+        registry.addViewController("/hello").setViewName("hello");
+        registry.addViewController("/login").setViewName("login");
     }
 }
