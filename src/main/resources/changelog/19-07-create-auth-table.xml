@@ -26,5 +26,17 @@
                                  baseTableName="user_dbb" baseColumnNames="id"
                                  referencedTableName="authority_dbb" referencedColumnNames="id" />
 
+        <createTable tableName="users_roles">
+            <column name="user_id" type="int">
+                <constraints foreignKeyName="user_id" referencedTableName="user_dbb" referencedColumnNames="id"/>
+            </column>
+            <column name="role_id" type="int">
+                <constraints foreignKeyName="role_id" referencedTableName="authority_dbb" referencedColumnNames="id"/>
+            </column>
+            <column name="id" type="serial">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+        </createTable>
+
     </changeSet>
 </databaseChangeLog>

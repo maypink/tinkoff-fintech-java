@@ -5,5 +5,5 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
 
         <include file="/changelog/create-weather-db.xml"/>
-        <include file="/changelog/create-auth-tablesss.xml"/>
+        <include file="/changelog/19-07-create-auth-table.xml"/>
 </databaseChangeLog>
