@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet id="Create auth table" author="maypink">
+        <createTable tableName="user_dbb">
+            <column name="id" type="serial">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="name" type="varchar"/>
+            <column name="email" type="varchar" />
+            <column name="password" type="varchar" />
+        </createTable>
+
+        <createTable tableName="authority_dbb">
+            <column name="id" type="serial">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="name" type="varchar"/>
+            <column name="authority" type="varchar" />
+        </createTable>
+
+        <addForeignKeyConstraint constraintName="users_roles"
+                                 baseTableName="user_dbb" baseColumnNames="id"
+                                 referencedTableName="authority_dbb" referencedColumnNames="id" />
+
+    </changeSet>
+</databaseChangeLog>

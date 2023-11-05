@@ -1,4 +1,4 @@
-package com.maypink.tinkoff.secutrity;
+package com.maypink.tinkoff.security;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

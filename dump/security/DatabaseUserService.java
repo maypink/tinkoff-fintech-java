@@ -1,4 +1,4 @@
-package com.maypink.tinkoff.secutrity;
+package com.maypink.tinkoff.security;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;

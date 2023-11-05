@@ -1,4 +1,4 @@
-package com.maypink.tinkoff.secutrity.workFactor;
+package com.maypink.tinkoff.security.workFactor;
 
 import com.google.common.base.Stopwatch;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
