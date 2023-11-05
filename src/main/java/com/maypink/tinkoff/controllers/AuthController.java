@@ -32,7 +32,6 @@ public class AuthController {
         return "login";
     }
 
-    // handler method to handle user registration request
     @GetMapping("register")
     public String showRegistrationForm(Model model){
         UserDto user = new UserDto();
@@ -40,7 +39,6 @@ public class AuthController {
         return "register";
     }
 
-    // handler method to handle register user form submit request
     @PostMapping("/register/save")
     public String registration(@Valid @ModelAttribute("user") UserDto user,
                                BindingResult result,

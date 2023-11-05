@@ -15,7 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name="authority_dbb")
+@Table(name="auth_dbb")
 public class Role
 {
     @Id
@@ -28,4 +28,9 @@ public class Role
 
     @ManyToMany(mappedBy="roles")
     private List<User> users = new ArrayList<>();
+
+    void addUser(User user){
+        this.users.add(user);
+        user.getRoles().add(this);
+    }
 }
