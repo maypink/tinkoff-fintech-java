@@ -43,6 +43,8 @@ public class WebSecurityConfig {
                         .requestMatchers(mvc.pattern("/register/**")).permitAll()
                         .requestMatchers(mvc.pattern("/index")).permitAll()
                         .requestMatchers(mvc.pattern("/users")).hasRole("ADMIN")
+                        .requestMatchers(mvc.pattern("/weather/new")).hasRole("ADMIN")
+                        .requestMatchers(mvc.pattern("/weather/")).hasRole("USER")
                 ).formLogin(
                         form -> form
                                 .loginPage("/login")
@@ -54,22 +56,6 @@ public class WebSecurityConfig {
                                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
                                 .permitAll()
                 );
-//                .authorizeHttpRequests((requests) -> requests
-//                        .requestMatchers(mvc.pattern("/login")).permitAll()
-//                        .requestMatchers(mvc.pattern("/home")).permitAll()
-//                        .requestMatchers(mvc.pattern("/registration")).permitAll()
-//                        .anyRequest().authenticated()
-//                )
-//                .formLogin((form) -> form
-//                        .loginPage("/login")
-//                        .loginProcessingUrl("/login")
-//                        .defaultSuccessUrl("/hello")
-//                        .permitAll()
-//                ).logout(
-//                logout -> logout
-//                        .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-//                        .permitAll()
-//        );
         return http.build();
     }
 
@@ -79,16 +65,4 @@ public class WebSecurityConfig {
                 .userDetailsService(userDetailsService)
                 .passwordEncoder(passwordEncoder());
     }
-
-//    @Bean
-//    public UserDetailsService userDetailsService() {
-//        UserDetails user =
-//                User.withDefaultPasswordEncoder()
-//                        .username("user")
-//                        .password("password")
-//                        .roles("USER")
-//                        .build();
-//
-//        return new InMemoryUserDetailsManager(user);
-//    }
 }

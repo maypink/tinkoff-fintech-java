@@ -66,6 +66,8 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
 	implementation 'com.google.guava:guava:28.2-jre'
+	testImplementation 'org.springframework.security:spring-security-test:4.2.3.RELEASE'
+
 
 }
 
