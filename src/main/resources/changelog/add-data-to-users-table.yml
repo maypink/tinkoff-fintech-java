@@ -1,0 +1,8 @@
+databaseChangeLog:
+  - changeSet:
+      id: add-data-to-user-table
+      author: maypink
+      changes:
+        - sqlFile:
+            path: changelog/sql/add-data-to-users-table.sql
+            stripComments: true

@@ -14,6 +14,7 @@ import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -32,6 +33,7 @@ public class WeatherController {
             summary = "Get weather from database."
     )
     @GetMapping("/{name}")
+    @PreAuthorize("hasAuthority('weather:read')")
     public ResponseEntity<?> get(@PathVariable @Parameter(description = "name") @NotEmpty @Size(max = 15) String name) {
 
         List<WeatherResource> weatherResources = weatherService.getWeatherByName(name);
@@ -46,6 +48,7 @@ public class WeatherController {
             summary = "Get all weathers from database."
     )
     @GetMapping("/all")
+    @PreAuthorize("hasAuthority('weather:read')")
     public ResponseEntity<?> getAllWeathers() {
         List<WeatherResource> weatherResources = weatherService.getAllWeathers();
         return ResponseEntity.status(HttpStatus.OK).body(weatherResources);
@@ -56,19 +59,11 @@ public class WeatherController {
             summary = "Add weather from Weather Service"
     )
     @PostMapping("/new")
+    @PreAuthorize("hasAuthority('weather:write')")
     public ResponseEntity<?> add(@RequestBody @Valid String query) throws ResponseWeatherErrorException {
 
         WeatherResource weatherResource = weatherMapper.toResource(weatherService.getWeather(query));
         weatherService.add(weatherResource);
         return ResponseEntity.status(HttpStatus.CREATED).body(weatherResource);
-    }
-
-    @Operation(
-            summary = "Get weather from Weather Service"
-    )
-    @GetMapping
-    @RateLimiter(name = "rateLimiterApi")
-    public ResponseEntity<?> getWeather(@RequestParam String query) throws ResponseWeatherErrorException {
-        return ResponseEntity.ok(weatherMapper.toResource(weatherService.getWeather(query)));
     }
 }

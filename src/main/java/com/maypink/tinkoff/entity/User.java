@@ -1,5 +1,6 @@
 package com.maypink.tinkoff.entity;
 
+import com.maypink.tinkoff.security.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,7 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name="user_dbb")
+@Table(name="users_dbb")
 public class User
 {
 
@@ -32,15 +33,7 @@ public class User
     @Column(nullable=false)
     private String password;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
-    @JoinTable(
-            name="users_roles",
-            joinColumns=@JoinColumn(name="user_id", referencedColumnName="id"),
-            inverseJoinColumns=@JoinColumn(name="role_id", referencedColumnName="id"))
-    private List<Role> roles = new ArrayList<>();
-
-    void addRole(Role role){
-        this.roles.add(role);
-        role.getUsers().add(this);
-    }
+    @Enumerated(value = EnumType.STRING)
+    @Column(nullable = false)
+    private Role role;
 }

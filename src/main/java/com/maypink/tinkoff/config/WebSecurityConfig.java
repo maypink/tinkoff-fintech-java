@@ -29,7 +29,7 @@ public class WebSecurityConfig {
 
     @Bean
     public static PasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder();
+        return new BCryptPasswordEncoder(10);
     }
 
     @Bean
@@ -44,8 +44,6 @@ public class WebSecurityConfig {
                         .requestMatchers(mvc.pattern("/register/**")).permitAll()
                         .requestMatchers(mvc.pattern("/index")).permitAll()
                         .requestMatchers(mvc.pattern("/users")).hasRole("ADMIN")
-//                        .requestMatchers(mvc.pattern("/weather/new")).hasRole("ADMIN")
-                        .requestMatchers(mvc.pattern("/weather/**")).hasAnyRole("USER", "ADMIN")
                 ).formLogin(
                         form -> form
                                 .loginPage("/login")

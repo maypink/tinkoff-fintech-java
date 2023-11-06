@@ -1,0 +1,32 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-weather-table
+      author: maypink
+      changes:
+        - createTable:
+            tableName: weathers
+            columns:
+              - column:
+                  name: id
+                  type: serial
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: weather_pk
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: region
+                  type: varchar(255)
+              - column:
+                  name: country
+                  type: varchar(255)
+              - column:
+                  name: tempC
+                  type: int
+              - column:
+                  name: tempF
+                  type: int

@@ -1,0 +1,38 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-user-table
+      author: maypink
+      changes:
+        - createTable:
+            tableName: users_dbb
+            columns:
+              - column:
+                  name: id
+                  type: serial
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: user_table_pk
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(64)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: email
+                  type: varchar(64)
+                  constraints:
+                    unique: true
+                    uniqueConstraintName: user_table_login_uq
+                    nullable: false
+              - column:
+                  name: password
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: role
+                  remarks: Роль
+                  type: varchar(32)
+                  constraints:
+                    nullable: false
