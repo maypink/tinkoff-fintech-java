@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 public class AuthController {
@@ -43,8 +44,8 @@ public class AuthController {
     public String registration(@Valid @ModelAttribute("user") UserDto user,
                                BindingResult result,
                                Model model){
-        User existing = userService.findByEmail(user.getEmail());
-        if (existing != null) {
+        Optional<User> existing = userService.findByEmail(user.getEmail());
+        if (existing.isPresent()) {
             result.rejectValue("email", null, "There is already an account registered with that email");
         }
         if (result.hasErrors()) {

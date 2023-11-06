@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -41,7 +42,7 @@ public class UserServiceImpl implements UserService {
         //encrypt the password once we integrate spring security
         //user.setPassword(userDto.getPassword());
         user.setPassword(passwordEncoder.encode(userDto.getPassword()));
-        Role role = roleRepository.findByName("ADMIN");
+        Role role = roleRepository.findByName("ROLE_ADMIN");
         if(role == null){
             role = checkRoleExist();
         }
@@ -50,7 +51,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User findByEmail(String email) {
+    public Optional<User> findByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 
@@ -72,7 +73,7 @@ public class UserServiceImpl implements UserService {
 
     private Role checkRoleExist() {
         Role role = new Role();
-        role.setName("ADMIN");
+        role.setName("ROLE_ADMIN");
         return roleRepository.save(role);
     }
 }

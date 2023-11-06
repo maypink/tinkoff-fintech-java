@@ -55,7 +55,7 @@ public class SecurityTests extends SpringBootApplicationTests {
 
     @Test
     @WithMockUser(username = "userAdmin", password = "password", roles = "ADMIN")
-    public void roleUserPostNewExpect200() throws Exception {
+    public void roleUserPostNewExpect201() throws Exception {
         String weatherName = "Milan";
         mockMvc.perform(post("/weather/new").contentType(MediaType.APPLICATION_JSON)
                         .content(weatherName)

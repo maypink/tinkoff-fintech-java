@@ -16,7 +16,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -57,15 +56,11 @@ public class WeatherController {
             summary = "Add weather from Weather Service"
     )
     @PostMapping("/new")
-    public ResponseEntity<?> add(@RequestBody @Valid String query, BindingResult bindingResult) throws ResponseWeatherErrorException {
+    public ResponseEntity<?> add(@RequestBody @Valid String query) throws ResponseWeatherErrorException {
 
-        if (bindingResult.hasErrors()) {
-            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Validation error");
-        } else {
-            WeatherResource weatherResource = weatherMapper.toResource(weatherService.getWeather(query));
-            weatherService.add(weatherResource);
-            return ResponseEntity.status(HttpStatus.CREATED).body(weatherResource);
-        }
+        WeatherResource weatherResource = weatherMapper.toResource(weatherService.getWeather(query));
+        weatherService.add(weatherResource);
+        return ResponseEntity.status(HttpStatus.CREATED).body(weatherResource);
     }
 
     @Operation(

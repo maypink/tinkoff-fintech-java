@@ -7,6 +7,7 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -38,13 +39,13 @@ public class WebSecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, MvcRequestMatcher.Builder mvc) throws Exception {
-        http.csrf(Customizer.withDefaults())
+        http.httpBasic(Customizer.withDefaults()).csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests((authorize) -> authorize
                         .requestMatchers(mvc.pattern("/register/**")).permitAll()
                         .requestMatchers(mvc.pattern("/index")).permitAll()
                         .requestMatchers(mvc.pattern("/users")).hasRole("ADMIN")
-                        .requestMatchers(mvc.pattern("/weather/new")).hasRole("ADMIN")
-                        .requestMatchers(mvc.pattern("/weather/")).hasRole("USER")
+//                        .requestMatchers(mvc.pattern("/weather/new")).hasRole("ADMIN")
+                        .requestMatchers(mvc.pattern("/weather/**")).hasAnyRole("USER", "ADMIN")
                 ).formLogin(
                         form -> form
                                 .loginPage("/login")
