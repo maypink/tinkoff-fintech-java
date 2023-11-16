@@ -1,7 +1,7 @@
 package com.maypink.tinkoff.controllers;
 
 import com.maypink.tinkoff.dto.UserDto;
-import com.maypink.tinkoff.entity.User;
+import com.maypink.tinkoff.entity.CustomUser;
 import com.maypink.tinkoff.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
@@ -44,7 +44,7 @@ public class AuthController {
     public String registration(@Valid @ModelAttribute("user") UserDto user,
                                BindingResult result,
                                Model model){
-        Optional<User> existing = userService.findByEmail(user.getEmail());
+        Optional<CustomUser> existing = userService.findByEmail(user.getEmail());
         if (existing.isPresent()) {
             result.rejectValue("email", null, "There is already an account registered with that email");
         }

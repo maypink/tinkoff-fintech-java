@@ -60,7 +60,6 @@ dependencies {
 	testImplementation 'org.springframework.security:spring-security-test:4.2.3.RELEASE'
 
 	implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.15.2'
-
 }
 
 dependencyManagement {

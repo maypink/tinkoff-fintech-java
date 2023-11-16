@@ -53,7 +53,6 @@ public class WebSecurityConfig {
                 ).logout(
                         logout -> logout
                                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-                                .permitAll()
                 );
         return http.build();
     }

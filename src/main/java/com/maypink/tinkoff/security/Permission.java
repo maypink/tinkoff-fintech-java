@@ -8,9 +8,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum Permission {
 
-    WEATHER_READ("cities:read"),
+    USER("USER"),
 
-    WEATHER_WRITE("cities:write");
+    ADMIN("ADMIN");
 
     private final String descriptor;
 }

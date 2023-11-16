@@ -12,7 +12,7 @@ public enum Role {
     ADMIN(Set.of(Permission.values())),
 
     USER(Set.of(
-            Permission.WEATHER_READ
+            Permission.USER
     ));
 
     private final Set<Permission> permissions;
