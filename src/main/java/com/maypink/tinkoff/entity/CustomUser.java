@@ -12,7 +12,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name="users")
+@Table(name="customUsers")
 public class CustomUser
 {
 
@@ -23,6 +23,9 @@ public class CustomUser
 
     @Column(nullable=false)
     private String name;
+
+    @Column(nullable=false)
+    private String lastName;
 
     @Column(nullable=false, unique=true)
     private String email;

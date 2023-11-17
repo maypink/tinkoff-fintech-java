@@ -30,7 +30,8 @@ public class UserServiceImpl implements UserService {
 //    @Transactional
     public void saveUser(UserDto userDto) {
         CustomUser customUser = new CustomUser();
-        customUser.setName(userDto.getFirstName() + " " + userDto.getLastName());
+        customUser.setName(userDto.getFirstName());
+        customUser.setLastName(userDto.getLastName());
         customUser.setEmail(userDto.getEmail());
 
         //encrypt the password once we integrate spring security
