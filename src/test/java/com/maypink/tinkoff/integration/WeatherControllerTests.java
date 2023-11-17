@@ -1,11 +1,10 @@
-package com.maypink.tinkoff.security;
+package com.maypink.tinkoff.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.maypink.tinkoff.controllers.resources.WeatherResource;
 import com.maypink.tinkoff.repositories.WeatherRepository;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -57,7 +56,7 @@ public class WeatherControllerTests extends SpringBootApplicationTests {
     }
 
     @Test
-    @WithMockUser(authorities = "weather:read")
+    @WithMockUser(authorities = "USER")
     void userGetAllShouldReturn200() throws Exception {
         final WeatherResource saved = weatherRepository.addWeather(weatherTest);
         assertThat(weatherRepository.getAllWeathers()).hasSize(1);
@@ -77,7 +76,7 @@ public class WeatherControllerTests extends SpringBootApplicationTests {
     }
 
     @Test
-    @WithMockUser(authorities = "weather:write")
+    @WithMockUser(authorities = "ADMIN")
     void adminGetAllShouldReturn200() throws Exception {
         final WeatherResource saved = weatherRepository.addWeather(weatherTest);
         assertThat(weatherRepository.getAllWeathers()).hasSize(1);
@@ -110,7 +109,7 @@ public class WeatherControllerTests extends SpringBootApplicationTests {
     }
 
     @Test
-    @WithMockUser(authorities = "weather:read")
+    @WithMockUser(authorities = "USER")
     void userGetWeatherShouldReturn200() throws Exception {
         final WeatherResource saved = weatherRepository.addWeather(weatherTest);
         assertThat(weatherRepository.getAllWeathers()).hasSize(1);
@@ -130,7 +129,7 @@ public class WeatherControllerTests extends SpringBootApplicationTests {
     }
 
     @Test
-    @WithMockUser(authorities = "weather:write")
+    @WithMockUser(authorities = "ADMIN")
     void adminGetWeatherShouldReturn200() throws Exception {
         final WeatherResource saved = weatherRepository.addWeather(weatherTest);
         assertThat(weatherRepository.getAllWeathers()).hasSize(1);
@@ -164,7 +163,7 @@ public class WeatherControllerTests extends SpringBootApplicationTests {
     }
 
     @Test
-    @WithMockUser(authorities = "weather:read")
+    @WithMockUser(authorities = "USER")
     void userPostNewWeatherShouldReturn403() throws Exception {
         weatherRepository.addWeather(nonExistentWeather);
         assertThat(weatherRepository.getAllWeathers()).hasSize(1);
@@ -176,20 +175,12 @@ public class WeatherControllerTests extends SpringBootApplicationTests {
         mockMvc.perform(requestBuilder)
 
                 .andExpectAll(
-                        status().isForbidden(),
-                        header().exists(HttpHeaders.LOCATION),
-                        content().contentType(MediaType.APPLICATION_JSON),
-                        jsonPath("$.id", notNullValue()),
-                        jsonPath("$[0].city.name").value(nonExistentWeather.name()),
-                        jsonPath("$[0].city.country").value(nonExistentWeather.country()),
-                        jsonPath("$[0].city.region").value(nonExistentWeather.region()),
-                        jsonPath("$[0].city.tempC").value(nonExistentWeather.tempC()),
-                        jsonPath("$[0].city.tempF").value(nonExistentWeather.tempF())
+                        status().isForbidden()
                 );
     }
 
     @Test
-    @WithMockUser(authorities = "weather:write")
+    @WithMockUser(authorities = "ADMIN")
     void adminPostNewWeatherShouldReturn201() throws Exception {
         weatherRepository.addWeather(nonExistentWeather);
         assertThat(weatherRepository.getAllWeathers()).hasSize(1);

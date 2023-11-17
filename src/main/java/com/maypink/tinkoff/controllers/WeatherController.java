@@ -33,7 +33,7 @@ public class WeatherController {
             summary = "Get weather from database."
     )
     @GetMapping("/{name}")
-    @PreAuthorize("hasAuthority('weather:read')")
+    @PreAuthorize("hasAuthority('USER')")
     public ResponseEntity<?> get(@PathVariable @Parameter(description = "name") @NotEmpty @Size(max = 15) String name) {
 
         List<WeatherResource> weatherResources = weatherService.getWeatherByName(name);
@@ -48,7 +48,7 @@ public class WeatherController {
             summary = "Get all weathers from database."
     )
     @GetMapping("/all")
-    @PreAuthorize("hasAuthority('weather:read')")
+    @PreAuthorize("hasAuthority('USER')")
     public ResponseEntity<?> getAllWeathers() {
         List<WeatherResource> weatherResources = weatherService.getAllWeathers();
         return ResponseEntity.status(HttpStatus.OK).body(weatherResources);
@@ -59,7 +59,7 @@ public class WeatherController {
             summary = "Add weather from Weather Service"
     )
     @PostMapping("/new")
-    @PreAuthorize("hasAuthority('weather:write')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<?> add(@RequestBody @Valid String query) throws ResponseWeatherErrorException {
 
         WeatherResource weatherResource = weatherMapper.toResource(weatherService.getWeather(query));
