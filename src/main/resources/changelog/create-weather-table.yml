@@ -4,14 +4,14 @@ databaseChangeLog:
       author: maypink
       changes:
         - createTable:
-            tableName: weathers
+            tableName: weathers_data
             columns:
               - column:
                   name: id
                   type: serial
                   constraints:
                     primaryKey: true
-                    primaryKeyName: weather_pk
+                    primaryKeyName: weathers_data_pk
                     nullable: false
               - column:
                   name: name

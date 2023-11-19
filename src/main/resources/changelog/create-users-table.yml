@@ -4,14 +4,14 @@ databaseChangeLog:
       author: maypink
       changes:
         - createTable:
-            tableName: customUsers
+            tableName: custom_users
             columns:
               - column:
                   name: id
                   type: serial
                   constraints:
                     primaryKey: true
-                    primaryKeyName: user_table_pk
+                    primaryKeyName: custom_users_table_pk
                     nullable: false
               - column:
                   name: name
@@ -19,7 +19,7 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: lastName
+                  name: last_name
                   type: varchar(64)
                   constraints:
                     nullable: false
@@ -28,7 +28,7 @@ databaseChangeLog:
                   type: varchar(64)
                   constraints:
                     unique: true
-                    uniqueConstraintName: user_table_login_uq
+                    uniqueConstraintName: custom_users_table_login_uq
                     nullable: false
               - column:
                   name: password

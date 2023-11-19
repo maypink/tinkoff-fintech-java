@@ -12,7 +12,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name="customUsers")
+@Table(name="custom_users")
 public class CustomUser
 {
 
@@ -24,7 +24,7 @@ public class CustomUser
     @Column(nullable=false)
     private String name;
 
-    @Column(nullable=false)
+    @Column(nullable=false, name = "last_name")
     private String lastName;
 
     @Column(nullable=false, unique=true)

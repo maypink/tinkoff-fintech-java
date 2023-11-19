@@ -3,10 +3,12 @@ package com.maypink.tinkoff.utils;
 import com.maypink.tinkoff.security.Role;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
 
+@Component
 public class RoleMapper {
     public Collection< ? extends GrantedAuthority> rolesToAuthorities(Role role) {
         Collection < ? extends GrantedAuthority> mapRoles = role.getPermissions().stream()
