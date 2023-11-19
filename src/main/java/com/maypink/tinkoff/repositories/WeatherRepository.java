@@ -36,4 +36,11 @@ public class WeatherRepository {
                 weatherResource.tempC(), weatherResource.tempF());
         return weatherResource;
     }
+
+    public WeatherResource updateWeather(WeatherResource weatherResource){
+        jdbcTemplate.update("update weathers_data set region=?, country=?, tempC=?, tempF=? where name=?",
+                weatherResource.region(), weatherResource.country(),
+                weatherResource.tempC(), weatherResource.tempF(), weatherResource.name());
+        return weatherResource;
+    }
 }
