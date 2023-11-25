@@ -14,9 +14,9 @@ import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -33,6 +33,7 @@ public class WeatherController {
             summary = "Get weather from database."
     )
     @GetMapping("/{name}")
+    @PreAuthorize("hasAuthority('USER')")
     public ResponseEntity<?> get(@PathVariable @Parameter(description = "name") @NotEmpty @Size(max = 15) String name) {
 
         List<WeatherResource> weatherResources = weatherService.getWeatherByName(name);
@@ -47,6 +48,7 @@ public class WeatherController {
             summary = "Get all weathers from database."
     )
     @GetMapping("/all")
+    @PreAuthorize("hasAuthority('USER')")
     public ResponseEntity<?> getAllWeathers() {
         List<WeatherResource> weatherResources = weatherService.getAllWeathers();
         return ResponseEntity.status(HttpStatus.OK).body(weatherResources);
@@ -57,23 +59,11 @@ public class WeatherController {
             summary = "Add weather from Weather Service"
     )
     @PostMapping("/new")
-    public ResponseEntity<?> add(@RequestBody @Valid String query, BindingResult bindingResult) throws ResponseWeatherErrorException {
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<?> add(@RequestBody @Valid String query) throws ResponseWeatherErrorException {
 
-        if (bindingResult.hasErrors()) {
-            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Validation error");
-        } else {
-            WeatherResource weatherResource = weatherMapper.toResource(weatherService.getWeather(query));
-            weatherService.add(weatherResource);
-            return ResponseEntity.status(HttpStatus.CREATED).body(weatherResource);
-        }
-    }
-
-    @Operation(
-            summary = "Get weather from Weather Service"
-    )
-    @GetMapping
-    @RateLimiter(name = "rateLimiterApi")
-    public ResponseEntity<?> getWeather(@RequestParam String query) throws ResponseWeatherErrorException {
-        return ResponseEntity.ok(weatherMapper.toResource(weatherService.getWeather(query)));
+        WeatherResource weatherResource = weatherMapper.toResource(weatherService.getWeather(query));
+        weatherService.add(weatherResource);
+        return ResponseEntity.status(HttpStatus.CREATED).body(weatherResource);
     }
 }

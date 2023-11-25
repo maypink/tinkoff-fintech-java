@@ -1,0 +1,7 @@
+databaseChangeLog:
+  - include:
+      file: changelog/create-weather-table.yml
+  - include:
+      file: changelog/create-users-table.yml
+  - include:
+      file: changelog/add-data-to-users-table.yml
