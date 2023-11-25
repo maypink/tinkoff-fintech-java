@@ -20,18 +20,21 @@ public class WeatherCacheTest {
             "region",
             "country",
             0,
-            0D);
+            0D,
+            "2023-06-09 23:34");
 
     private static final WeatherResource WEATHER_RESOURCE_SECOND = new WeatherResource(
             "weather2",
             "region",
             "country",
             0,
-            0D);
+            0D,
+            "2023-06-09 23:34");
 
     @Test
     public void addSomeDataToCache_WhenGetData_ThenIsEqualWithCacheElement() {
-        WeatherCache weatherCache = new WeatherCache(2);
+        WeatherCache weatherCache = new WeatherCache();
+        weatherCache.setSize(2);
         weatherCache.put("1", WEATHER_RESOURCE);
         weatherCache.put("2", WEATHER_RESOURCE_SECOND);
         assertEquals(WEATHER_RESOURCE, weatherCache.get("1").get());
@@ -40,7 +43,8 @@ public class WeatherCacheTest {
 
     @Test
     public void addDataToCacheToTheNumberOfSize_WhenAddOneMoreData_ThenLeastRecentlyDataWillEvict() {
-        WeatherCache weatherCache = new WeatherCache(1);
+        WeatherCache weatherCache = new WeatherCache();
+        weatherCache.setSize(1);
         weatherCache.put("1", WEATHER_RESOURCE);
         weatherCache.put("2", WEATHER_RESOURCE_SECOND);
         assertFalse(weatherCache.get("1").isPresent());
@@ -50,7 +54,8 @@ public class WeatherCacheTest {
     public void runMultiThreadTask_WhenPutDataInConcurrentToCache_ThenNoDataLost() throws Exception {
         final int size = 50;
         final ExecutorService executorService = Executors.newFixedThreadPool(5);
-        BaseCache cache = new WeatherCache(size);
+        BaseCache cache = new WeatherCache();
+        cache.setSize(size);
         CountDownLatch countDownLatch = new CountDownLatch(size);
         try {
             IntStream.range(0, size).<Runnable>mapToObj(key -> () -> {

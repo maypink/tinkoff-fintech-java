@@ -32,21 +32,6 @@ spring:
   sql:
     init:
       mode: always
-weather-service:
-  apiKey: c80b7bd185614d9eb1d171205232110
-  endpoint: /v1/current.json
-  host: http://api.weatherapi.com
-cache:
-  course:
-    size: '5'
-logging:
-  level:
-    org:
-      springframework:
-        security: TRACE
-server:
-  port: '8080'
-
   kafka:
     consumer:
       auto-offset-reset: earliest
@@ -55,7 +40,7 @@ server:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       properties:
-        spring.json.trusted.packages: com.maypink
+        spring.json.trusted.packages: com.maypink.tinkoff.controllers.resources
     producer:
       acks: -1
       bootstrap-servers: localhost:29092
@@ -64,8 +49,23 @@ server:
     template:
       default-topic: weather
 
+weather-service:
+  apiKey: c80b7bd185614d9eb1d171205232110
+  endpoint: /v1/current.json
+  host: http://api.weatherapi.com
+cache:
+  course:
+    size: 5
+logging:
+  level:
+    org:
+      springframework:
+        security: TRACE
+server:
+  port: '8080'
+
 weather:
-  frequency: "*/3 * * * * *"
+  frequency: "*/20 * * * * *"
   cities:
     - Surgut
     - Berlin

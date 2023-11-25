@@ -18,4 +18,6 @@ public class WeatherDtoDB{
     String country;
     Integer tempC;
     Double tempF;
+
+    String dateTime;
 }

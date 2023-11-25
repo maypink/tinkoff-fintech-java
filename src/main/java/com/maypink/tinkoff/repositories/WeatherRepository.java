@@ -24,23 +24,31 @@ public class WeatherRepository {
         return weatherDtoDBs.stream().map(weather -> weatherMapper.toResource(weather)).toList();
     }
 
+    public List<WeatherResource> existsByNameAndDateTime(String name, String dateTime){
+        List<WeatherDtoDB> weatherDtoDBs = jdbcTemplate.query("SELECT * FROM weathers_data WHERE name=? AND date_time=?",
+                new BeanPropertyRowMapper<>(WeatherDtoDB.class), name, dateTime);
+        return weatherDtoDBs.stream().map(weather -> weatherMapper.toResource(weather)).toList();
+    }
+
     public List<WeatherResource> getAllWeathers(){
         List<WeatherDtoDB> weatherDtoDBs = jdbcTemplate.query("SELECT * FROM weathers_data", new BeanPropertyRowMapper<>(WeatherDtoDB.class));
         return weatherDtoDBs.stream().map(weather -> weatherMapper.toResource(weather)).toList();
     }
 
     public WeatherResource addWeather(WeatherResource weatherResource){
-        jdbcTemplate.update("INSERT INTO weathers_data (name, region, country, tempC, tempF) " +
-                        "VALUES(?, ?, ?, ?, ?)",
+        jdbcTemplate.update("INSERT INTO weathers_data (name, region, country, temp_c, temp_f, date_time) " +
+                        "VALUES(?, ?, ?, ?, ?, ?)",
                 weatherResource.name(), weatherResource.region(), weatherResource.country(),
-                weatherResource.tempC(), weatherResource.tempF());
+                weatherResource.tempC(), weatherResource.tempF(), weatherResource.dateTime());
         return weatherResource;
     }
 
     public WeatherResource updateWeather(WeatherResource weatherResource){
-        jdbcTemplate.update("update weathers_data set region=?, country=?, tempC=?, tempF=? where name=?",
+        jdbcTemplate.update("update weathers_data set region=?, country=?, temp_c=?, temp_f=? where name=?, date_time=?",
                 weatherResource.region(), weatherResource.country(),
-                weatherResource.tempC(), weatherResource.tempF(), weatherResource.name());
+                weatherResource.tempC(), weatherResource.tempF(), weatherResource.name(), weatherResource.dateTime());
         return weatherResource;
     }
+
+
 }
