@@ -19,21 +19,28 @@ public class WeatherRepository {
     JdbcTemplate jdbcTemplate;
 
     public List<WeatherResource> existsByName(String name){
-        List<WeatherDtoDB> weatherDtoDBs = jdbcTemplate.query("SELECT * FROM Weather WHERE name=?",
+        List<WeatherDtoDB> weatherDtoDBs = jdbcTemplate.query("SELECT * FROM weathers_data WHERE name=?",
                 new BeanPropertyRowMapper<>(WeatherDtoDB.class), name);
         return weatherDtoDBs.stream().map(weather -> weatherMapper.toResource(weather)).toList();
     }
 
     public List<WeatherResource> getAllWeathers(){
-        List<WeatherDtoDB> weatherDtoDBs = jdbcTemplate.query("SELECT * FROM Weather", new BeanPropertyRowMapper<>(WeatherDtoDB.class));
+        List<WeatherDtoDB> weatherDtoDBs = jdbcTemplate.query("SELECT * FROM weathers_data", new BeanPropertyRowMapper<>(WeatherDtoDB.class));
         return weatherDtoDBs.stream().map(weather -> weatherMapper.toResource(weather)).toList();
     }
 
     public WeatherResource addWeather(WeatherResource weatherResource){
-        jdbcTemplate.update("INSERT INTO Weather (name, region, country, tempC, tempF) " +
+        jdbcTemplate.update("INSERT INTO weathers_data (name, region, country, tempC, tempF) " +
                         "VALUES(?, ?, ?, ?, ?)",
                 weatherResource.name(), weatherResource.region(), weatherResource.country(),
                 weatherResource.tempC(), weatherResource.tempF());
+        return weatherResource;
+    }
+
+    public WeatherResource updateWeather(WeatherResource weatherResource){
+        jdbcTemplate.update("update weathers_data set region=?, country=?, tempC=?, tempF=? where name=?",
+                weatherResource.region(), weatherResource.country(),
+                weatherResource.tempC(), weatherResource.tempF(), weatherResource.name());
         return weatherResource;
     }
 }
