@@ -7,8 +7,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 public class DoubleLinkedList<T> {
 
     private DummyNode<T> dummyNode;
-    private LinkedListNode<T> head;
-    private LinkedListNode<T> tail;
+    private DoubleLinkedNode<T> head;
+    private DoubleLinkedNode<T> tail;
     private AtomicInteger size;
     private ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
@@ -49,13 +49,13 @@ public class DoubleLinkedList<T> {
     public boolean contains(T value) {
         this.lock.readLock().lock();
         try {
-            return search(value).hasElement();
+            return !search(value).isEmpty();
         } finally {
             this.lock.readLock().unlock();
         }
     }
 
-    public LinkedListNode<T> search(T value) {
+    public DoubleLinkedNode<T> search(T value) {
         this.lock.readLock().lock();
         try {
             return head.search(value);
@@ -64,7 +64,7 @@ public class DoubleLinkedList<T> {
         }
     }
 
-    public LinkedListNode<T> add(T value) {
+    public DoubleLinkedNode<T> add(T value) {
         this.lock.writeLock().lock();
         try {
             head = new Node<T>(value, head, this);
@@ -92,30 +92,30 @@ public class DoubleLinkedList<T> {
         }
     }
 
-    public LinkedListNode<T> remove(T value) {
+    public DoubleLinkedNode<T> remove(T value) {
         this.lock.writeLock().lock();
         try {
-            LinkedListNode<T> linkedListNode = head.search(value);
-            if (!linkedListNode.isEmpty()) {
-                if (linkedListNode == tail) {
+            DoubleLinkedNode<T> doubleLinkedNode = head.search(value);
+            if (!doubleLinkedNode.isEmpty()) {
+                if (doubleLinkedNode == tail) {
                     tail = tail.getPrev();
                 }
-                if (linkedListNode == head) {
+                if (doubleLinkedNode == head) {
                     head = head.getNext();
                 }
-                linkedListNode.detach();
+                doubleLinkedNode.detach();
                 size.decrementAndGet();
             }
-            return linkedListNode;
+            return doubleLinkedNode;
         } finally {
             this.lock.writeLock().unlock();
         }
     }
 
-    public LinkedListNode<T> removeTail() {
+    public DoubleLinkedNode<T> removeTail() {
         this.lock.writeLock().lock();
         try {
-            LinkedListNode<T> oldTail = tail;
+            DoubleLinkedNode<T> oldTail = tail;
             if (oldTail == head) {
                 tail = head = dummyNode;
             } else {
@@ -131,11 +131,11 @@ public class DoubleLinkedList<T> {
         }
     }
 
-    public LinkedListNode<T> moveToFront(LinkedListNode<T> node) {
+    public DoubleLinkedNode<T> moveToFront(DoubleLinkedNode<T> node) {
         return node.isEmpty() ? dummyNode : updateAndMoveToFront(node, node.getElement());
     }
 
-    public LinkedListNode<T> updateAndMoveToFront(LinkedListNode<T> node, T newValue) {
+    public DoubleLinkedNode<T> updateAndMoveToFront(DoubleLinkedNode<T> node, T newValue) {
         this.lock.writeLock().lock();
         try {
             if (node.isEmpty() || (this != (node.getListReference()))) {
@@ -149,7 +149,7 @@ public class DoubleLinkedList<T> {
         }
     }
 
-    private void detach(LinkedListNode<T> node) {
+    private void detach(DoubleLinkedNode<T> node) {
         if (node != tail) {
             node.detach();
             if (node == head) {

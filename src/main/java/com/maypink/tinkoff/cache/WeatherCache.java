@@ -13,7 +13,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 public class WeatherCache implements BaseCache<String, WeatherResource> {
     @Value("${cache.course.size}")
     private final int size;
-    private Map<String, LinkedListNode<CacheElement<String, WeatherResource>>> linkedListNodeMap;
+    private Map<String, DoubleLinkedNode<CacheElement<String, WeatherResource>>> linkedListNodeMap;
     private DoubleLinkedList<CacheElement<String, WeatherResource>> doubleLinkedList;
     private ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
@@ -28,9 +28,9 @@ public class WeatherCache implements BaseCache<String, WeatherResource> {
         this.lock.writeLock().lock();
         try {
             CacheElement<String, WeatherResource> item = new CacheElement<String, WeatherResource>(key, value);
-            LinkedListNode<CacheElement<String, WeatherResource>> newNode;
+            DoubleLinkedNode<CacheElement<String, WeatherResource>> newNode;
             if (this.linkedListNodeMap.containsKey(key)) {
-                LinkedListNode<CacheElement<String, WeatherResource>> node = this.linkedListNodeMap.get(key);
+                DoubleLinkedNode<CacheElement<String, WeatherResource>> node = this.linkedListNodeMap.get(key);
                 newNode = doubleLinkedList.updateAndMoveToFront(node, item);
             } else {
                 if (this.size() >= this.size) {
@@ -52,10 +52,10 @@ public class WeatherCache implements BaseCache<String, WeatherResource> {
     public Optional<WeatherResource> get(String key) {
         this.lock.readLock().lock();
         try {
-            LinkedListNode<CacheElement<String, WeatherResource>> linkedListNode = this.linkedListNodeMap.get(key);
-            if (linkedListNode != null && !linkedListNode.isEmpty()) {
-                linkedListNodeMap.put(key, this.doubleLinkedList.moveToFront(linkedListNode));
-                return Optional.of(linkedListNode.getElement().getValue());
+            DoubleLinkedNode<CacheElement<String, WeatherResource>> doubleLinkedNode = this.linkedListNodeMap.get(key);
+            if (doubleLinkedNode != null && !doubleLinkedNode.isEmpty()) {
+                linkedListNodeMap.put(key, this.doubleLinkedList.moveToFront(doubleLinkedNode));
+                return Optional.of(doubleLinkedNode.getElement().getValue());
             }
             return Optional.empty();
         } finally {
@@ -66,8 +66,8 @@ public class WeatherCache implements BaseCache<String, WeatherResource> {
     public boolean isPresent(String key){
         this.lock.readLock().lock();
         try {
-            LinkedListNode<CacheElement<String, WeatherResource>> linkedListNode = this.linkedListNodeMap.get(key);
-            return linkedListNode != null && !linkedListNode.isEmpty();
+            DoubleLinkedNode<CacheElement<String, WeatherResource>> doubleLinkedNode = this.linkedListNodeMap.get(key);
+            return doubleLinkedNode != null && !doubleLinkedNode.isEmpty();
         } finally {
             this.lock.readLock().unlock();
         }
@@ -103,11 +103,11 @@ public class WeatherCache implements BaseCache<String, WeatherResource> {
     private boolean evictElement() {
         this.lock.writeLock().lock();
         try {
-            LinkedListNode<CacheElement<String, WeatherResource>> linkedListNode = doubleLinkedList.removeTail();
-            if (linkedListNode.isEmpty()) {
+            DoubleLinkedNode<CacheElement<String, WeatherResource>> doubleLinkedNode = doubleLinkedList.removeTail();
+            if (doubleLinkedNode.isEmpty()) {
                 return false;
             }
-            linkedListNodeMap.remove(linkedListNode.getElement().getKey());
+            linkedListNodeMap.remove(doubleLinkedNode.getElement().getKey());
             return true;
         } finally {
             this.lock.writeLock().unlock();

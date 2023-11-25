@@ -1,24 +1,19 @@
 package com.maypink.tinkoff.cache;
 
 
-public class Node<T> implements LinkedListNode<T> {
+public class Node<T> implements DoubleLinkedNode<T> {
     private T value;
     private DoubleLinkedList<T> list;
-    private LinkedListNode next;
-    private LinkedListNode prev;
+    private DoubleLinkedNode next;
+    private DoubleLinkedNode prev;
 
-    public Node(T value, LinkedListNode<T> next, DoubleLinkedList<T> list) {
+    public Node(T value, DoubleLinkedNode<T> next, DoubleLinkedList<T> list) {
         this.value = value;
         this.next = next;
         this.setPrev(next.getPrev());
         this.prev.setNext(this);
         this.next.setPrev(this);
         this.list = list;
-    }
-
-    @Override
-    public boolean hasElement() {
-        return true;
     }
 
     @Override
@@ -41,29 +36,29 @@ public class Node<T> implements LinkedListNode<T> {
     }
 
     @Override
-    public LinkedListNode<T> setPrev(LinkedListNode<T> prev) {
+    public DoubleLinkedNode<T> setPrev(DoubleLinkedNode<T> prev) {
         this.prev = prev;
         return this;
     }
 
     @Override
-    public LinkedListNode<T> setNext(LinkedListNode<T> next) {
+    public DoubleLinkedNode<T> setNext(DoubleLinkedNode<T> next) {
         this.next = next;
         return this;
     }
 
     @Override
-    public LinkedListNode<T> getPrev() {
+    public DoubleLinkedNode<T> getPrev() {
         return this.prev;
     }
 
     @Override
-    public LinkedListNode<T> getNext() {
+    public DoubleLinkedNode<T> getNext() {
         return this.next;
     }
 
     @Override
-    public LinkedListNode<T> search(T value) {
+    public DoubleLinkedNode<T> search(T value) {
         return this.getElement() == value ? this : this.getNext().search(value);
     }
 }

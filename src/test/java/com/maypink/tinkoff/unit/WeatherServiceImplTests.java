@@ -35,9 +35,13 @@ public class WeatherServiceImplTests {
                 0,
                 0D);
         String weatherName = weatherResource.name();
+        // set conditions
         Mockito.when(weatherCache.get(weatherName)).thenReturn(Optional.of(weatherResource));
         Mockito.when(weatherRepository.existsByName(weatherName)).thenReturn(List.of());
+        // check
         assertEquals(weatherServiceImpl.getWeatherByName(weatherName).get(0), weatherResource);
+        Mockito.verify(weatherRepository, times(0)).existsByName(weatherName);
+        Mockito.verify(weatherCache, times(1)).get(weatherName);
     }
 
     @Test
@@ -49,9 +53,14 @@ public class WeatherServiceImplTests {
                 0,
                 0D);
         String weatherName = weatherResource.name();
+        // set conditions
         Mockito.when(weatherCache.get(weatherName)).thenReturn(Optional.empty());
         Mockito.when(weatherRepository.existsByName(weatherName)).thenReturn(List.of(weatherResource));
+        // check
         assertEquals(weatherServiceImpl.getWeatherByName(weatherName).get(0), weatherResource);
+        Mockito.verify(weatherRepository, times(1)).existsByName(weatherName);
+        // since we will check cache anyway
+        Mockito.verify(weatherCache, times(1)).get(weatherName);
     }
 
     @Test

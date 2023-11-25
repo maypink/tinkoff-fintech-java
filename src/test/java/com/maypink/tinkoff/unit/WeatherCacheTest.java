@@ -40,7 +40,7 @@ public class WeatherCacheTest {
 
     @Test
     public void addDataToCacheToTheNumberOfSize_WhenAddOneMoreData_ThenLeastRecentlyDataWillEvict() {
-        WeatherCache weatherCache = new WeatherCache(2);
+        WeatherCache weatherCache = new WeatherCache(1);
         weatherCache.put("1", WEATHER_RESOURCE);
         weatherCache.put("2", WEATHER_RESOURCE_SECOND);
         assertFalse(weatherCache.get("1").isPresent());
