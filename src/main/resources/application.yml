@@ -65,7 +65,7 @@ server:
   port: '8080'
 
 weather:
-  frequency: "*/20 * * * * *"
+  frequency: "*/15 * * * * *"
   cities:
     - Surgut
     - Berlin
