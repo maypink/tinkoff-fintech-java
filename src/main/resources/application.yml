@@ -1,0 +1,74 @@
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, metrics, prometheus
+resilience4j:
+  ratelimiter:
+    instances:
+      rateLimiterApi:
+        timeout-duration: 5s
+        register-health-indicator: 'true'
+        allow-health-indicator-to-fail: 'true'
+        limit-for-period: '5000'
+        limit-refresh-period: 1M
+    metrics:
+      enabled: 'true'
+spring:
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        show_sql: 'true'
+  application:
+    name: '''Maiia weather app'''
+  datasource:
+    driverClassName: org.postgresql.Driver
+    password: password
+    username: postgres
+    url: jdbc:postgresql://localhost:5432/
+  liquibase:
+    change-log: classpath:changelog/main-db-changelog.yml
+  sql:
+    init:
+      mode: always
+  kafka:
+    consumer:
+      auto-offset-reset: earliest
+      bootstrap-servers: localhost:29092
+      group-id: weather-group
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: com.maypink.tinkoff.controllers.resources
+    producer:
+      acks: -1
+      bootstrap-servers: localhost:29092
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    template:
+      default-topic: weather
+
+weather-service:
+  apiKey: c80b7bd185614d9eb1d171205232110
+  endpoint: /v1/current.json
+  host: http://api.weatherapi.com
+cache:
+  course:
+    size: 5
+logging:
+  level:
+    org:
+      springframework:
+        security: TRACE
+server:
+  port: '8080'
+
+weather:
+  frequency: "*/15 * * * * *"
+  cities:
+    - Surgut
+    - Berlin
+    - Milan
+    - Tokyo
+    - Moscow

@@ -6,5 +6,6 @@ public record WeatherResource(
         String region,
         String country,
         Integer tempC,
-        Double tempF
+        Double tempF,
+        String dateTime
 ) { }

@@ -25,8 +25,11 @@ databaseChangeLog:
                   name: country
                   type: varchar(255)
               - column:
-                  name: tempC
+                  name: temp_c
                   type: int
               - column:
-                  name: tempF
+                  name: temp_f
                   type: int
+              - column:
+                  name: date_time
+                  type: varchar(255)

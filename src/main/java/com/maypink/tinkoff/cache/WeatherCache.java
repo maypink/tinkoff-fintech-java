@@ -2,6 +2,7 @@ package com.maypink.tinkoff.cache;
 
 import com.maypink.tinkoff.controllers.resources.WeatherResource;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -12,16 +13,10 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 @Component
 public class WeatherCache implements BaseCache<String, WeatherResource> {
     @Value("${cache.course.size}")
-    private final int size;
-    private Map<String, DoubleLinkedNode<CacheElement<String, WeatherResource>>> linkedListNodeMap;
-    private DoubleLinkedList<CacheElement<String, WeatherResource>> doubleLinkedList;
+    private int size;
+    private Map<String, DoubleLinkedNode<CacheElement<String, WeatherResource>>> linkedListNodeMap = new ConcurrentHashMap<>(size);
+    private DoubleLinkedList<CacheElement<String, WeatherResource>> doubleLinkedList = new DoubleLinkedList<>();
     private ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
-
-    public WeatherCache(int size) {
-        this.size = size;
-        this.linkedListNodeMap = new ConcurrentHashMap<>(size);
-        this.doubleLinkedList = new DoubleLinkedList<>();
-    }
 
     @Override
     public boolean put(String key, WeatherResource value) {
@@ -81,6 +76,10 @@ public class WeatherCache implements BaseCache<String, WeatherResource> {
         } finally {
             this.lock.readLock().unlock();
         }
+    }
+
+    public void setSize(int size){
+        this.size = size;
     }
 
     @Override

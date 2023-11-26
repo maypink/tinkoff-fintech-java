@@ -9,6 +9,8 @@ public interface BaseCache<K, V> {
 
     int size();
 
+    public void setSize(int size);
+
     boolean isEmpty();
 
     void clear();

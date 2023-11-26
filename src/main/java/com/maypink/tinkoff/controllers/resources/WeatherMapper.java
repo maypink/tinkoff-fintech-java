@@ -11,7 +11,8 @@ public class WeatherMapper {
                 weatherApiResponse.location().region(),
                 weatherApiResponse.location().country(),
                 weatherApiResponse.current().tempC(),
-                weatherApiResponse.current().tempF()
+                weatherApiResponse.current().tempF(),
+                weatherApiResponse.current().lastUpdated()
         );
     }
 
@@ -20,7 +21,8 @@ public class WeatherMapper {
                 weatherDtoDB.getRegion(),
                 weatherDtoDB.getCountry(),
                 weatherDtoDB.getTempC(),
-                weatherDtoDB.getTempF()
+                weatherDtoDB.getTempF(),
+                weatherDtoDB.getDateTime()
         );
     }
 }
